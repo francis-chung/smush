@@ -14,7 +14,11 @@ public:
   }
   
   friend Vec2 operator+(const Vec2& v1, const Vec2& v2) {
-    return Vec2(v1.x, v1.y);
+    return Vec2(v1.x+v2.x, v1.y+v2.y);
+  }
+
+  friend Vec2 operator-(const Vec2& v1, const Vec2& v2) {
+    return Vec2(v1.x-v2.x, v1.y-v2.y);
   }
 
   friend Vec2 operator*(double c, const Vec2& v) {
@@ -23,6 +27,14 @@ public:
 
   friend Vec2 operator*(const Vec2& v, double c) {
     return c * v;
+  }
+
+  friend void operator+=(Vec2& v1, const Vec2& v2) {
+    v1.x += v2.x, v1.y += v2.y;
+  }
+
+  friend void operator-=(Vec2& v1, const Vec2& v2) {
+    v1.x -= v2.x, v1.y -= v2.y;
   }
 };
 
