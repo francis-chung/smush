@@ -19,6 +19,7 @@ public:
   Vec2& operator+=(const Vec2& v) { x += v.x; y += v.y; return *this; }
   Vec2& operator-=(const Vec2& v) { x -= v.x; y -= v.y; return *this; }
   Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
+  Vec2& operator*=(double c) { x *= c; y *= c; return *this; }
 
   double norm() { return x*x + y*y; }
   double length() { return sqrt(norm()); }
@@ -64,7 +65,7 @@ public:
     double dt = t - time;
     for (Particle& p : particles) {
       p.set_force_acc(0.0);
-      p.add_force(g * p.get_inv_mass());
+      p.add_force(g * p.get_mass());
     }
     for (Particle& p : particles) {
       p.integrate(dt, linearDamping);
