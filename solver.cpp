@@ -66,14 +66,14 @@ public:
     double dist = dp.length();
     Vec2 dir = dp / dist;
 
-    Vec2 spring_force = -stiffness * (dist - restLength) * dir;
-    p1.add_force(spring_force);
-    p2.add_force(-spring_force);
+    Vec2 springForce = -stiffness * (dist - restLength) * dir;
+    p1.add_force(springForce);
+    p2.add_force(-springForce);
 
     Vec2 dv = p1.get_vel() - p2.get_vel();
-    Vec2 damping_force = -dampCoeff * dot(dv, dir) * dir;
-    p1.add_force(damping_force);
-    p2.add_force(-damping_force);
+    Vec2 dampingForce = -dampCoeff * dot(dv, dir) * dir;
+    p1.add_force(dampingForce);
+    p2.add_force(-dampingForce);
   }
 };
 
