@@ -19,11 +19,16 @@ public:
   Vec2& operator+=(const Vec2& v) { x += v.x; y += v.y; return *this; }
   Vec2& operator-=(const Vec2& v) { x -= v.x; y -= v.y; return *this; }
   Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
+
+  double norm() { return x*x + y*y; }
+  double length() { return sqrt(norm()); }
+  friend double dot(const Vec2& v1, const Vec2& v2) { return v1.x*v2.x + v1.y*v2.y; }
 };
 
 class Particle {
 private:
   Vec2 pos, vel, acc;
+  double mass, invMass;
 
 public:
   Particle(Vec2 p, Vec2 v, Vec2 a): pos(p), vel(v), acc(a) {}
@@ -31,6 +36,8 @@ public:
   const Vec2& get_pos() const { return pos; }
   const Vec2& get_vel() const { return vel; }
   const Vec2& get_acc() const { return acc; }
+  const double get_mass() const { return mass; }
+  const double get_inv_mass() const { return invMass; }
 
   void integrate(double dt, double ld) {
     pos += vel*dt + 0.5*acc*dt*dt;
@@ -43,15 +50,15 @@ class World {
 private:
   vector<Particle> particles;
   double time;
-  double linear_damping;
+  double linearDamping;
 
 public:
-  World(vector<Particle> p, double ld): particles(p), time(0), linear_damping(ld) {}
+  World(vector<Particle> p, double ld): particles(p), time(0), linearDamping(ld) {}
 
   void update(double t) {
     double dt = t - time;
     for (Particle& p : particles) {
-      p.integrate(dt, linear_damping);
+      p.integrate(dt, linearDamping);
     }
     time = t;
   }
