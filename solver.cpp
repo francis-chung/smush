@@ -7,35 +7,16 @@ private:
   double x, y;
 
 public:
-  Vec2(double x, double y): x(x), y(y) {}
+  Vec2(double x = 0.0, double y = 0.0): x(x), y(y) {}
 
-  void set(Vec2 v) {
-    x = v.x, y = v.y;
-  }
+  void set(Vec2 v) { x = v.x, y = v.y; }
   
-  friend Vec2 operator+(const Vec2& v1, const Vec2& v2) {
-    return Vec2(v1.x+v2.x, v1.y+v2.y);
-  }
-
-  friend Vec2 operator-(const Vec2& v1, const Vec2& v2) {
-    return Vec2(v1.x-v2.x, v1.y-v2.y);
-  }
-
-  friend Vec2 operator*(double c, const Vec2& v) {
-    return Vec2(c*v.x, c*v.y);
-  }
-
-  friend Vec2 operator*(const Vec2& v, double c) {
-    return c * v;
-  }
-
-  friend void operator+=(Vec2& v1, const Vec2& v2) {
-    v1.x += v2.x, v1.y += v2.y;
-  }
-
-  friend void operator-=(Vec2& v1, const Vec2& v2) {
-    v1.x -= v2.x, v1.y -= v2.y;
-  }
+  friend Vec2 operator+(const Vec2& v1, const Vec2& v2) { return Vec2(v1.x+v2.x, v1.y+v2.y); }
+  friend Vec2 operator-(const Vec2& v1, const Vec2& v2) { return Vec2(v1.x-v2.x, v1.y-v2.y); }
+  friend Vec2 operator*(double c, const Vec2& v) { return Vec2(c*v.x, c*v.y); }
+  friend Vec2 operator*(const Vec2& v, double c) { return c * v; }
+  Vec2& operator+=(const Vec2& v) { x += v.x; y += v.y; return *this; }
+  Vec2& operator-=(const Vec2& v) { x -= v.x; y -= v.y; return *this; }
 };
 
 class Particle {
@@ -45,28 +26,13 @@ private:
 public:
   Particle(Vec2 p, Vec2 v, Vec2 a): pos(p), vel(v), acc(a) {}
 
-  const Vec2& get_pos() {
-    return pos;
-  }
+  const Vec2& get_pos() const { return pos; }
+  const Vec2& get_vel() const { return vel; }
+  const Vec2& get_acc() const { return acc; }
 
-  const Vec2& get_vel() {
-    return vel;
-  }
-
-  const Vec2& get_acc() {
-    return acc;
-  }
-
-  void set_pos(Vec2 v) {
-    pos.set(v);
-  }
-
-  void set_vel(Vec2 v) {
-    vel.set(v);
-  }
-  
-  void set_acc(Vec2 v) {
-    acc.set(v);
+  void integrate(double dt) {
+    pos += vel*dt + 0.5*acc*dt*dt;
+    vel += acc*dt;
   }
 };
 
@@ -79,10 +45,10 @@ public:
   World(vector<Particle> p): particles(p), time(0) {}
 
   void update(double t) {
+    double dt = t - time;
     for (Particle& p : particles) {
-      double dt = t - time;
-      p.set_pos(p.get_pos() + p.get_vel() + 0.5*p.get_acc()*dt);
-      p.set_vel(p.get_vel() + p.get_acc()*dt);
+      p.integrate(dt);
     }
+    time = t;
   }
 };
