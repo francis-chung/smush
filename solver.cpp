@@ -1,4 +1,5 @@
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ public:
   friend Vec2 operator*(const Vec2& v, double c) { return c * v; }
   Vec2& operator+=(const Vec2& v) { x += v.x; y += v.y; return *this; }
   Vec2& operator-=(const Vec2& v) { x -= v.x; y -= v.y; return *this; }
+  Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
 };
 
 class Particle {
@@ -30,9 +32,10 @@ public:
   const Vec2& get_vel() const { return vel; }
   const Vec2& get_acc() const { return acc; }
 
-  void integrate(double dt) {
+  void integrate(double dt, double ld) {
     pos += vel*dt + 0.5*acc*dt*dt;
     vel += acc*dt;
+    vel *= pow(ld, dt);
   }
 };
 
@@ -40,14 +43,15 @@ class World {
 private:
   vector<Particle> particles;
   double time;
+  double linear_damping;
 
 public:
-  World(vector<Particle> p): particles(p), time(0) {}
+  World(vector<Particle> p, double ld): particles(p), time(0), linear_damping(ld) {}
 
   void update(double t) {
     double dt = t - time;
     for (Particle& p : particles) {
-      p.integrate(dt);
+      p.integrate(dt, linear_damping);
     }
     time = t;
   }
