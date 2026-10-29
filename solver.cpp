@@ -57,15 +57,19 @@ public:
 
 class Spring {
 private: 
-  Particle& p1, p2;
+  int i, j;    // World's particle vector indices
   double restLength, stiffness, dampCoeff;
 
 public: 
-  Spring(Particle p1, Particle p2, double len, double st, double dc) : p1(p1), p2(p2), restLength(len), stiffness(st), dampCoeff(dc) {}
+  Spring(int i, int j, double len, double st, double dc) : i(i), j(j), restLength(len), stiffness(st), dampCoeff(dc) {}
 
-  void apply_spring_force() {
+  void apply_spring_force(vector<Particle>& particles) {
+    Particle& p1 = particles[i];
+    Particle& p2 = particles[j];
+
     Vec2 dp = p1.get_pos() - p2.get_pos();
     double dist = dp.norm();
+    if (dist < 1e-9) return;    // guard against dividing by zero
     Vec2 dir = dp / dist;
 
     Vec2 springForce = -stiffness * (dist - restLength) * dir;
@@ -89,7 +93,7 @@ private:
   void add_spring(vector<Particle>& particles, int i, int j, double stiff, double damp) {
     Vec2 d = particles[j].get_pos() - particles[i].get_pos();
     double len = d.norm();
-    springs.push_back(Spring(particles[i], particles[j], len, stiff, damp));
+    springs.push_back(Spring(i, j, len, stiff, damp));
   }
 
 public:
@@ -131,8 +135,8 @@ public:
 
   const vector<Spring>& get_springs() const { return springs; }
 
-  void update_springs() {
-    for (auto& s : springs) { s.apply_spring_force(); }
+  void update_springs(vector<Particle>& particles) {
+    for (Spring& s : springs) { s.apply_spring_force(particles); }
   }
 };
 
@@ -158,7 +162,7 @@ public:
       p.add_force(g * p.get_mass());
     }
     for (SoftRect& r : rects) {
-      r.update_springs();
+      r.update_springs(particles);
     }
     for (Particle& p : particles) {
       p.integrate(dt, linearDamping);
