@@ -10,6 +10,9 @@ private:
 public:
   Vec2(double x = 0.0, double y = 0.0): x(x), y(y) {}
 
+  double get_x() const { return x; }
+  double get_y() const { return y; }
+
   void set(Vec2 v) { x = v.x, y = v.y; }
   
   Vec2 operator-() const { return Vec2(-x, -y); }
@@ -23,8 +26,7 @@ public:
   Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
   Vec2& operator*=(double c) { x *= c; y *= c; return *this; }
 
-  double norm() { return x*x + y*y; }
-  double length() { return sqrt(norm()); }
+  double norm() { return sqrt(x*x + y*y); }
   friend double dot(const Vec2& v1, const Vec2& v2) { return v1.x*v2.x + v1.y*v2.y; }
 };
 
@@ -63,7 +65,7 @@ public:
 
   void apply_spring_force() {
     Vec2 dp = p1.get_pos() - p2.get_pos();
-    double dist = dp.length();
+    double dist = dp.norm();
     Vec2 dir = dp / dist;
 
     Vec2 springForce = -stiffness * (dist - restLength) * dir;
@@ -74,6 +76,34 @@ public:
     Vec2 dampingForce = -dampCoeff * dot(dv, dir) * dir;
     p1.add_force(dampingForce);
     p2.add_force(-dampingForce);
+  }
+};
+
+class SoftRect {
+private: 
+  double w, h;
+  double mass;
+  double density; // number of particles per edge length
+  vector<vector<Particle>> particles;
+  vector<Spring> springs;
+
+  SoftRect(Vec2 p, double wd, double hi, double ms, double dens) {
+    w = wd, h = hi;
+    mass = ms;
+    density = dens;
+    particles = vector<vector<Particle>>();
+    
+    double pm = mass / (density * density);
+    double px = p.get_x(), py = p.get_y();
+    for (double x = px, i = 0; x <= px + wd; x += wd / density, ++i) {
+      particles.push_back(vector<Particle>());
+      for (double y = py; y <= py + hi; y += hi / density) {
+        Vec2 pos = Vec2(x, y);
+        Vec2 vel = Vec2(0, 0);
+        Particle p = Particle(pos, vel, pm);
+        particles[i].push_back(p);
+      }
+    }
   }
 };
 
