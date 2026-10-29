@@ -113,38 +113,47 @@ private:
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < m; ++j) {
         const Particle& p1 = particles[i][j];
-        if (j+1 < m) { _add_spring(p1, particles[i][j+1], strStiff, strDamp); }
-        if (i+1 < n) { _add_spring(p1, particles[i+1][j], strStiff, strDamp); }
-        if (i+1 < n && j+1 < m) { _add_spring(p1, particles[i+1][j+1], sheStiff, sheDamp); }
-        if (i+1 < n && j > 0) { _add_spring(p1, particles[i+1][j-1], sheStiff, sheDamp); }
-        if (j+2 < m) { _add_spring(p1, particles[i][j+2], benStiff, benDamp); }
-        if (i+2 < n) { _add_spring(p1, particles[i+2][j], benStiff, benDamp); }
+        if (j+1 < m) { add_spring(p1, particles[i][j+1], strStiff, strDamp); }
+        if (i+1 < n) { add_spring(p1, particles[i+1][j], strStiff, strDamp); }
+        if (i+1 < n && j+1 < m) { add_spring(p1, particles[i+1][j+1], sheStiff, sheDamp); }
+        if (i+1 < n && j > 0) { add_spring(p1, particles[i+1][j-1], sheStiff, sheDamp); }
+        if (j+2 < m) { add_spring(p1, particles[i][j+2], benStiff, benDamp); }
+        if (i+2 < n) { add_spring(p1, particles[i+2][j], benStiff, benDamp); }
       }
     }
   }
 
-  void _add_spring(const Particle& p1, const Particle& p2, double stiff, double damp) {
+  void add_spring(const Particle& p1, const Particle& p2, double stiff, double damp) {
     Vec2 d = p2.get_pos() - p1.get_pos();
     double len = d.norm();
     springs.push_back(Spring(p1, p2, len, stiff, damp));
+  }
+
+public:
+  void update_springs() {
+    for (auto& s : springs) { s.apply_spring_force(); }
   }
 };
 
 class World {
 private:
   vector<Particle> particles;
+  vector<SoftRect> rects;
   double time;
   double linearDamping;
   inline static const Vec2 g = Vec2(0, -9.81);
 
 public:
-  World(vector<Particle> p, double ld): particles(p), time(0), linearDamping(ld) {}
+  World(vector<Particle> p, vector<SoftRect> rects, double ld): particles(p), rects(rects), time(0), linearDamping(ld) {}
 
   void update(double t) {
     double dt = t - time;
     for (Particle& p : particles) {
       p.set_force_acc(0.0);
       p.add_force(g * p.get_mass());
+    }
+    for (SoftRect& r : rects) {
+      r.update_springs();
     }
     for (Particle& p : particles) {
       p.integrate(dt, linearDamping);
