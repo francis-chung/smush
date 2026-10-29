@@ -8,7 +8,7 @@ private:
   double x, y;
 
 public:
-  Vec2(double x = 0.0, double y = 0.0): x(x), y(y) {}
+  Vec2(double x = 0.0, double y = 0.0) : x(x), y(y) {}
 
   double get_x() const { return x; }
   double get_y() const { return y; }
@@ -37,7 +37,7 @@ private:
   double mass, invMass;
 
 public:
-  Particle(Vec2 p, Vec2 v, double mass): pos(p), vel(v), mass(mass), invMass(1.0/mass), forceAcc(0.0) {}
+  Particle(Vec2 p, Vec2 v, double mass) : pos(p), vel(v), mass(mass), invMass(1.0/mass), forceAcc(0.0) {}
 
   const Vec2& get_pos() const { return pos; }
   const Vec2& get_vel() const { return vel; }
@@ -57,11 +57,11 @@ public:
 
 class Spring {
 private: 
-  Particle p1, p2;
+  Particle& p1, p2;
   double restLength, stiffness, dampCoeff;
 
 public: 
-  Spring(Particle p1, Particle p2, double len, double st, double dc): p1(p1), p2(p2), restLength(len), stiffness(st), dampCoeff(dc) {}
+  Spring(Particle p1, Particle p2, double len, double st, double dc) : p1(p1), p2(p2), restLength(len), stiffness(st), dampCoeff(dc) {}
 
   void apply_spring_force() {
     Vec2 dp = p1.get_pos() - p2.get_pos();
@@ -83,53 +83,54 @@ class SoftRect {
 private: 
   double w, h;
   double mass;
-  double density; // number of particles per edge length
-  vector<vector<Particle>> particles;
+  vector<vector<int>> grid;
   vector<Spring> springs;
 
-  SoftRect(Vec2 p, double wd, double hi, double ms, double dens) {
-    w = wd, h = hi;
-    mass = ms;
-    density = dens;
-    particles = vector<vector<Particle>>();
-    
-    double pm = mass / (density * density);
+  void add_spring(vector<Particle>& particles, int i, int j, double stiff, double damp) {
+    Vec2 d = particles[j].get_pos() - particles[i].get_pos();
+    double len = d.norm();
+    springs.push_back(Spring(particles[i], particles[j], len, stiff, damp));
+  }
+
+public:
+  SoftRect(vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, int subd) :
+    w(wd), h(hi), mass(ms)
+  {
+    int nx = subd + 1, ny = subd + 1;
+    double pm = mass / (nx * ny);
     double px = p.get_x(), py = p.get_y();
-    for (double x = px, i = 0; x <= px + wd; x += wd / density, ++i) {
-      particles.push_back(vector<Particle>());
-      for (double y = py; y <= py + hi; y += hi / density) {
+
+    for (int i = 0; i < nx; ++i) {
+      grid.push_back(vector<int>());
+      for (int j = 0; j < ny; ++j) {
+        double x = px + (wd / subd) * i;
+        double y = py + (hi / subd) * j;
         Vec2 pos = Vec2(x, y);
         Vec2 vel = Vec2(0, 0);
         Particle p = Particle(pos, vel, pm);
-        particles[i].push_back(p);
+        particles.push_back(p);
+        grid[(int)grid.size()-1].push_back((int)particles.size()-1);
       }
     }
     
     double strStiff = 1.0, strDamp = 0.9;
     double sheStiff = 0.3, sheDamp = 0.9;
     double benStiff = 0.3, benDamp = 0.9;
-    int n = particles.size();
-    int m = particles[0].size();
-    for (int i = 0; i < n; ++i) {
-      for (int j = 0; j < m; ++j) {
-        const Particle& p1 = particles[i][j];
-        if (j+1 < m) { add_spring(p1, particles[i][j+1], strStiff, strDamp); }
-        if (i+1 < n) { add_spring(p1, particles[i+1][j], strStiff, strDamp); }
-        if (i+1 < n && j+1 < m) { add_spring(p1, particles[i+1][j+1], sheStiff, sheDamp); }
-        if (i+1 < n && j > 0) { add_spring(p1, particles[i+1][j-1], sheStiff, sheDamp); }
-        if (j+2 < m) { add_spring(p1, particles[i][j+2], benStiff, benDamp); }
-        if (i+2 < n) { add_spring(p1, particles[i+2][j], benStiff, benDamp); }
+    for (int i = 0; i < nx; ++i) {
+      for (int j = 0; j < ny; ++j) {
+        int p1 = grid[i][j];
+        if (j+1 < ny)              add_spring(particles, p1, grid[i][j+1], strStiff, strDamp); 
+        if (i+1 < nx)              add_spring(particles, p1, grid[i+1][j], strStiff, strDamp); 
+        if (i+1 < nx && j+1 < ny)  add_spring(particles, p1, grid[i+1][j+1], sheStiff, sheDamp); 
+        if (i+1 < nx && j > 0)     add_spring(particles, p1, grid[i+1][j-1], sheStiff, sheDamp); 
+        if (j+2 < ny)              add_spring(particles, p1, grid[i][j+2], benStiff, benDamp); 
+        if (i+2 < nx)              add_spring(particles, p1, grid[i+2][j], benStiff, benDamp); 
       }
     }
   }
 
-  void add_spring(const Particle& p1, const Particle& p2, double stiff, double damp) {
-    Vec2 d = p2.get_pos() - p1.get_pos();
-    double len = d.norm();
-    springs.push_back(Spring(p1, p2, len, stiff, damp));
-  }
+  const vector<Spring>& get_springs() const { return springs; }
 
-public:
   void update_springs() {
     for (auto& s : springs) { s.apply_spring_force(); }
   }
@@ -144,7 +145,11 @@ private:
   inline static const Vec2 g = Vec2(0, -9.81);
 
 public:
-  World(vector<Particle> p, vector<SoftRect> rects, double ld): particles(p), rects(rects), time(0), linearDamping(ld) {}
+  World(double ld) : time(0), linearDamping(ld), particles(vector<Particle>()), rects(vector<SoftRect>()) {}
+
+  void add_rect(Vec2 origin, double w, double h, double mass, int subdiv) {
+    rects.push_back(SoftRect(particles, origin, w, h, mass, subdiv));
+  }
 
   void update(double t) {
     double dt = t - time;
