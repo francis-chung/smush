@@ -1,7 +1,13 @@
 #include <vector>
 #include <cmath>
+#include <chrono> 
+#include <thread>
 
 using namespace std;
+
+using Clock = chrono::high_resolution_clock;
+using TimePoint = chrono::time_point<Clock>;
+using Duration = chrono::duration<double>;
 
 class Vec2 {
 private:
@@ -171,3 +177,34 @@ public:
     time = t;
   }
 };
+
+
+int main() {
+  double linearDamp = 0.05;
+  World world = World(linearDamp);
+  
+  const double physicsHz = 120.0;
+  const double fixedDeltaTime = 1.0 / physicsHz;
+  TimePoint currentTime = Clock::now();
+  double accum = 0.0;
+
+  bool running = true;
+  while (running) {
+    TimePoint newTime = Clock::now();
+    Duration frameTime = newTime - currentTime;
+    currentTime = newTime;
+
+    // caps max frame time to prevent spiral of death
+    double dt = frameTime.count();
+    if (dt > 0.25) dt = 0.25;
+
+    accum += dt;
+    while (accum >= fixedDeltaTime) {
+      world.update(fixedDeltaTime);
+      accum -= fixedDeltaTime;
+    }
+
+    // sleep briefly to prevent 100% CPU pinning
+    this_thread::sleep_for(chrono::milliseconds(1));
+  }
+}
