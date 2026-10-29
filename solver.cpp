@@ -104,6 +104,29 @@ private:
         particles[i].push_back(p);
       }
     }
+    
+    double strStiff = 1.0, strDamp = 0.9;
+    double sheStiff = 0.3, sheDamp = 0.9;
+    double benStiff = 0.3, benDamp = 0.9;
+    int n = particles.size();
+    int m = particles[0].size();
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < m; ++j) {
+        const Particle& p1 = particles[i][j];
+        if (j+1 < m) { add_spring(p1, particles[i][j+1], strStiff, strDamp); }
+        if (i+1 < n) { add_spring(p1, particles[i+1][j], strStiff, strDamp); }
+        if (i+1 < n && j+1 < m) { add_spring(p1, particles[i+1][j+1], sheStiff, sheDamp); }
+        if (i+1 < n && j > 0) { add_spring(p1, particles[i+1][j-1], sheStiff, sheDamp); }
+        if (j+2 < m) { add_spring(p1, particles[i][j+2], benStiff, benDamp); }
+        if (i+2 < n) { add_spring(p1, particles[i+2][j], benStiff, benDamp); }
+      }
+    }
+  }
+
+  void add_spring(const Particle& p1, const Particle& p2, double stiff, double damp) {
+    Vec2 d = p2.get_pos() - p1.get_pos();
+    double len = d.norm();
+    springs.push_back(Spring(p1, p2, len, stiff, damp));
   }
 };
 
