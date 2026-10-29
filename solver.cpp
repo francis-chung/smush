@@ -26,7 +26,8 @@ public:
   Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
   Vec2& operator*=(double c) { x *= c; y *= c; return *this; }
 
-  double norm() { return sqrt(x*x + y*y); }
+  double normsq() { return x*x + y*y; }
+  double norm() { return sqrt(norm()); }
   friend double dot(const Vec2& v1, const Vec2& v2) { return v1.x*v2.x + v1.y*v2.y; }
 };
 
@@ -37,12 +38,12 @@ private:
   double mass, invMass;
 
 public:
-  Particle(Vec2 p, Vec2 v, double mass) : pos(p), vel(v), mass(mass), invMass(1.0/mass), forceAcc(0.0) {}
+  Particle(Vec2 p, Vec2 v, double mass) : pos(p), vel(v), forceAcc(0.0), mass(mass), invMass(1.0/mass) {}
 
   const Vec2& get_pos() const { return pos; }
   const Vec2& get_vel() const { return vel; }
-  const double get_mass() const { return mass; }
-  const double get_inv_mass() const { return invMass; }
+  double get_mass() const { return mass; }
+  double get_inv_mass() const { return invMass; }
 
   void set_force_acc(const Vec2& force) { forceAcc = force; }
   void add_force(const Vec2& force) { forceAcc += force; }
@@ -149,7 +150,7 @@ private:
   inline static const Vec2 g = Vec2(0, -9.81);
 
 public:
-  World(double ld) : time(0), linearDamping(ld), particles(vector<Particle>()), rects(vector<SoftRect>()) {}
+  World(double ld) : particles(vector<Particle>()), rects(vector<SoftRect>()), time(0), linearDamping(ld) {}
 
   void add_rect(Vec2 origin, double w, double h, double mass, int subdiv) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, subdiv));
@@ -158,7 +159,7 @@ public:
   void update(double t) {
     double dt = t - time;
     for (Particle& p : particles) {
-      p.set_force_acc(0.0);
+      p.set_force_acc(Vec2(0, 0));
       p.add_force(g * p.get_mass());
     }
     for (SoftRect& r : rects) {
