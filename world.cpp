@@ -23,7 +23,7 @@ public:
     double dt = t - time;
     for (Particle& p : particles) {
       p.set_force_acc(Vec2(0, 0));
-      p.add_force(g * p.get_mass());
+      if (!p.get_pinned()) { p.add_force(g * p.get_mass()); }
     }
     for (SoftRect& r : rects) {
       r.update_springs(particles);
