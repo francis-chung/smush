@@ -23,12 +23,12 @@ public:
     Vec2 dir = dp / dist;
 
     Vec2 springForce = -stiffness * (dist - restLength) * dir;
-    if (p1.get_pinned()) { p1.add_force(springForce); }
-    if (p2.get_pinned()) { p2.add_force(-springForce); }
+    p1.add_force(springForce); 
+    p2.add_force(-springForce); 
 
     Vec2 dv = p1.get_vel() - p2.get_vel();
     Vec2 dampingForce = -dampCoeff * dot(dv, dir) * dir;
-    if (p1.get_pinned()) { p1.add_force(dampingForce); }
-    if (p2.get_pinned()) { p2.add_force(-dampingForce); }
+    p1.add_force(dampingForce);
+    p2.add_force(-dampingForce);
   }
 };
