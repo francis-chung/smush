@@ -24,7 +24,7 @@ public:
   void set_force_acc(const Vec2& force) { forceAcc = force; }
   void add_force(const Vec2& force) { forceAcc += force; }
 
-  void pin() { invMass = 0; }
+  void pin() { invMass = 0; vel = (0.0, 0.0); }
   void unpin() { invMass = 1.0 / mass; }
 
   void integrate(double dt, double ld) {
