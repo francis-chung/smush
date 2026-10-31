@@ -12,7 +12,9 @@ using Duration = std::chrono::duration<double>;
 
 int main() {
   double linearDamp = 0.05;
-  World world = World(linearDamp);
+  Vec2 lower_bounds = Vec2(-50.0, -50.0);
+  Vec2 upper_bounds = Vec2(50.0, 50.0);
+  World world = World(linearDamp, lower_bounds, upper_bounds);
   
   const double physicsHz = 120.0;
   const double fixedDeltaTime = 1.0 / physicsHz;

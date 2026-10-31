@@ -7,7 +7,7 @@
 class SoftRect {
 private: 
   double w, h;
-  double mass;
+  double mass, restitution;
   int nx, ny;   // number of particles aligned to axes
   std::vector<std::vector<int>> grid;
   std::vector<Spring> springs;
@@ -19,8 +19,8 @@ private:
   }
 
 public:
-  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, int subd) :
-    w(wd), h(hi), mass(ms), nx(subd + 1), ny(subd + 1)
+  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, int subd) :
+    w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1)
   {
     double pm = mass / (nx * ny);
     double px = p.get_x(), py = p.get_y();
@@ -32,7 +32,7 @@ public:
         double y = py + (hi / subd) * j;
         Vec2 pos = Vec2(x, y);
         Vec2 vel = Vec2(0, 0);
-        Particle p = Particle(pos, vel, pm);
+        Particle p = Particle(pos, vel, pm, restitution);
         particles.push_back(p);
         grid[(int)grid.size()-1].push_back((int)particles.size()-1);
       }

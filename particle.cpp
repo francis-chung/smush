@@ -9,9 +9,10 @@ private:
   Vec2 pos, vel;
   Vec2 forceAcc;
   double mass, invMass;
+  double restitution;
 
 public:
-  Particle(Vec2 p, Vec2 v, double mass) : pos(p), vel(v), forceAcc(0.0), mass(mass) {
+  Particle(Vec2 p, Vec2 v, double mass, double rest) : pos(p), vel(v), forceAcc(0.0), mass(mass), restitution(rest) {
     assert(mass > 0);
     invMass = 1.0 / mass;
   }
@@ -37,7 +38,7 @@ public:
 
   void boundary_collision(const Vec2& lower_bounds, const Vec2& upper_bounds) {
     double x = pos.get_x(), y = pos.get_y();
-    if (x < lower_bounds.get_x() || x > upper_bounds.get_x()) set_vel({ vel.get_x(), -vel.get_y() });
-    if (y < lower_bounds.get_y() || y > upper_bounds.get_y()) set_vel({ -vel.get_x(), vel.get_y() }); 
+    if (x < lower_bounds.get_x() || x > upper_bounds.get_x()) set_vel({ restitution * vel.get_x(), restitution * -vel.get_y() });
+    if (y < lower_bounds.get_y() || y > upper_bounds.get_y()) set_vel({ restitution * -vel.get_x(), restitution * vel.get_y() }); 
   }
 };

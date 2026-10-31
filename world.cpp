@@ -13,12 +13,12 @@ private:
   inline static const Vec2 g = Vec2(0, -9.81);
 
 public:
-  World(double ld, Vec2 lower_bounds, Vec2 upper_bounds) : 
+  World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = Vec2(1e9, 1e9)) : 
     particles(std::vector<Particle>()), rects(std::vector<SoftRect>()), 
     linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
 
-  void add_rect(Vec2 origin, double w, double h, double mass, int subdiv) {
-    rects.push_back(SoftRect(particles, origin, w, h, mass, subdiv));
+  void add_rect(Vec2 origin, double w, double h, double mass, double restitution, int subdiv) {
+    rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv));
   }
   
   void pin_particle(SoftRect& rect, int i, int j) { 
