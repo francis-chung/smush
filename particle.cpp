@@ -29,8 +29,8 @@ public:
 
   void integrate(double dt, double ld) {
     Vec2 acc = forceAcc * invMass;
-    pos += vel*dt + 0.5*acc*dt*dt;
     vel += acc*dt;
     vel *= pow(ld, dt);
+    pos += vel*dt;
   }
 };
