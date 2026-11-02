@@ -10,6 +10,7 @@ private:
   double mass, restitution;
   int nx, ny;   // number of particles aligned to axes
   std::vector<std::vector<int>> grid;
+  std::vector<int> boundary;
   std::vector<Spring> springs;
 
   void add_spring(std::vector<Particle>& particles, int i, int j, double stiff, double damp) {
@@ -37,6 +38,10 @@ public:
         grid[(int)grid.size()-1].push_back((int)particles.size()-1);
       }
     }
+    for (int i = 1; i < ny; ++i)   boundary.push_back(grid[nx-1][i]);
+    for (int i = 0; i < nx; ++i)   boundary.push_back(grid[i][0]);
+    for (int i = 1; i < nx; ++i)   boundary.push_back(grid[nx-1-i][ny-1]);
+    for (int i = 1; i < ny-1; ++i) boundary.push_back(grid[0][ny-1-i]);
     
     double strStiff = 1.0, strDamp = 0.9;
     double sheStiff = 0.3, sheDamp = 0.9;
