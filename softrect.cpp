@@ -4,6 +4,17 @@
 #include "particle.cpp"
 #include "spring.cpp"
 
+class AABB {
+private: 
+  Vec2 min, max;
+
+public: 
+  AABB(Vec2 min, Vec2 max) : min(min), max(max) {}
+
+  const Vec2& get_min() { return min; }
+  const Vec2& get_max() { return max; }
+};
+
 class SoftRect {
 private: 
   double w, h;
@@ -65,5 +76,36 @@ public:
 
   void update_springs(std::vector<Particle>& particles) {
     for (Spring& s : springs) { s.apply_spring_force(particles); }
+  }
+
+  bool point_in_polygon(int pIndex, const std::vector<Particle>& particles) {
+    double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
+    bool inside = false;
+    int sz = (int)boundary.size();
+    for (int i = 0, j = sz-1; i < sz; j = i++) {
+      double v1x = particles[i].get_pos().get_x(), v1y = particles[i].get_pos().get_y();
+      double v2x = particles[j].get_pos().get_x(), v2y = particles[j].get_pos().get_y();
+      if (v2y != v1y && (py-v1y)*(v2x-v1x)/(v2y-v1y) + v1x >= px) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  AABB get_aabb(const std::vector<Particle>& particles) {
+    double minX = particles[grid[0][0]].get_pos().get_x(), maxX = particles[grid[0][0]].get_pos().get_x();
+    double minY = particles[grid[0][0]].get_pos().get_y(), maxY = particles[grid[0][0]].get_pos().get_y();
+    for (int i = 0; i < nx; ++i) {
+      for (int j = 0; j < ny; ++j) {
+        double cx = particles[grid[nx][ny]].get_pos().get_x();
+        double cy = particles[grid[nx][ny]].get_pos().get_y();
+        minX = std::min(minX, cx); maxX = std::max(maxX, cx);
+        minY = std::min(minY, cy); maxY = std::max(maxY, cy);
+      }
+    }
+    Vec2 min_pos = Vec2(minX, minY);
+    Vec2 max_pos = Vec2(maxX, maxY);
+    AABB aabb = AABB(min_pos, max_pos);
+    return aabb;
   }
 };
