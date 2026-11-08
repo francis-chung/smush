@@ -1,7 +1,5 @@
 #include "world.cpp"
 
-#include <vector>
-#include <cmath>
 #include <chrono> 
 #include <thread>
 

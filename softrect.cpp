@@ -9,6 +9,7 @@ private:
   Vec2 min, max;
 
 public: 
+  AABB() : min(Vec2(0, 0)), max(Vec2(0, 0)) {}
   AABB(Vec2 min, Vec2 max) : min(min), max(max) {}
 
   const Vec2& get_min() const { return min; }
@@ -83,8 +84,8 @@ public:
     bool inside = false;
     int sz = (int)boundary.size();
     for (int i = 0, j = sz-1; i < sz; j = i++) {
-      double v1x = particles[i].get_pos().get_x(), v1y = particles[i].get_pos().get_y();
-      double v2x = particles[j].get_pos().get_x(), v2y = particles[j].get_pos().get_y();
+      double v1x = particles[boundary[i]].get_pos().get_x(), v1y = particles[boundary[i]].get_pos().get_y();
+      double v2x = particles[boundary[j]].get_pos().get_x(), v2y = particles[boundary[j]].get_pos().get_y();
       if (v2y != v1y && (py-v1y)*(v2x-v1x)/(v2y-v1y) + v1x >= px) {
         inside = !inside;
       }
@@ -97,8 +98,8 @@ public:
     double minY = particles[grid[0][0]].get_pos().get_y(), maxY = particles[grid[0][0]].get_pos().get_y();
     for (int i = 0; i < nx; ++i) {
       for (int j = 0; j < ny; ++j) {
-        double cx = particles[grid[nx][ny]].get_pos().get_x();
-        double cy = particles[grid[nx][ny]].get_pos().get_y();
+        double cx = particles[grid[i][j]].get_pos().get_x();
+        double cy = particles[grid[i][j]].get_pos().get_y();
         minX = std::min(minX, cx); maxX = std::max(maxX, cx);
         minY = std::min(minY, cy); maxY = std::max(maxY, cy);
       }
@@ -123,7 +124,7 @@ public:
     double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
     for (int i = 0; i < nx; ++i) {
       for (int j = 0; j < ny; ++j) {
-        int p = grid[nx][ny];
+        int p = grid[i][j];
         int x = particles[p].get_pos().get_x();
         int y = particles[p].get_pos().get_y();
         if (x > minX && x < maxX && y > minY && y < maxY) points.push_back(p);

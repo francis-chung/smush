@@ -26,6 +26,6 @@ public:
   Vec2& operator*=(double c) { x *= c; y *= c; return *this; }
 
   double normsq() { return x*x + y*y; }
-  double norm() { return sqrt(norm()); }
+  double norm() { return sqrt(normsq()); }
   friend double dot(const Vec2& v1, const Vec2& v2) { return v1.x*v2.x + v1.y*v2.y; }
 };
