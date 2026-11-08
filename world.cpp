@@ -3,11 +3,13 @@
 #include "mathlib.cpp"
 #include "particle.cpp"
 #include "softrect.cpp"
+#include "collision.cpp"
 
 class World {
 private:
   std::vector<Particle> particles;
   std::vector<SoftRect> rects;
+  CollisionManager colls;
   double linearDamping;
   Vec2 lower_bounds, upper_bounds;
   inline static const Vec2 g = Vec2(0, -9.81);
@@ -15,7 +17,7 @@ private:
 public:
   World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = Vec2(1e9, 1e9)) : 
     particles(std::vector<Particle>()), rects(std::vector<SoftRect>()), 
-    linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
+    colls(particles, rects), linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
 
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, int subdiv) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv));
@@ -38,5 +40,6 @@ public:
       p.integrate(dt, linearDamping);
       p.boundary_collision(lower_bounds, upper_bounds);
     }
+    colls.update();
   }
 };
