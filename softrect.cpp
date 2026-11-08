@@ -109,6 +109,14 @@ public:
     return aabb;
   }
 
+  bool colliding_aabb(const AABB& currentBox, const AABB& otherBox) {
+    Vec2 cMin = currentBox.get_min(), cMax = currentBox.get_max();
+    Vec2 oMin = otherBox.get_min(), oMax = otherBox.get_max();
+    bool intersectX = (std::min(cMax.get_x(), oMax.get_x()) > std::max(cMin.get_x(), oMin.get_x()));
+    bool intersectY = (std::min(cMax.get_y(), oMax.get_y()) > std::max(cMin.get_y(), oMin.get_y()));
+    return intersectX && intersectY;
+  }
+
   std::vector<int> point_candidates_in_polygon(const std::vector<Particle>& particles, const AABB& otherBox) {
     std::vector<int> points;
     double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
