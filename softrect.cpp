@@ -11,8 +11,8 @@ private:
 public: 
   AABB(Vec2 min, Vec2 max) : min(min), max(max) {}
 
-  const Vec2& get_min() { return min; }
-  const Vec2& get_max() { return max; }
+  const Vec2& get_min() const { return min; }
+  const Vec2& get_max() const { return max; }
 };
 
 class SoftRect {
@@ -107,5 +107,20 @@ public:
     Vec2 max_pos = Vec2(maxX, maxY);
     AABB aabb = AABB(min_pos, max_pos);
     return aabb;
+  }
+
+  std::vector<int> point_candidates_in_polygon(const std::vector<Particle>& particles, const AABB& otherBox) {
+    std::vector<int> points;
+    double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
+    double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
+    for (int i = 0; i < nx; ++i) {
+      for (int j = 0; j < ny; ++j) {
+        int p = grid[nx][ny];
+        int x = particles[p].get_pos().get_x();
+        int y = particles[p].get_pos().get_y();
+        if (x > minX && x < maxX && y > minY && y < maxY) points.push_back(p);
+      }
+    }
+    return points;
   }
 };
