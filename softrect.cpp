@@ -70,9 +70,9 @@ public:
     }
   }
 
-  int get_particle(int i, int j) { return grid[i][j]; }
-  int get_nx() { return nx; }
-  int get_ny() { return ny; }
+  int get_particle(int i, int j) const { return grid[i][j]; }
+  int get_nx() const { return nx; }
+  int get_ny() const { return ny; }
 
   void update_springs(std::vector<Particle>& particles) {
     for (Spring& s : springs) { s.apply_spring_force(particles); }
