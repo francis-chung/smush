@@ -24,6 +24,7 @@ public:
 
   void set_force_acc(const Vec2& force) { forceAcc = force; }
   void add_force(const Vec2& force) { forceAcc += force; }
+  void set_pos(const Vec2& p) { pos = p; }
   void set_vel(const Vec2& v) { vel = v; }
 
   void pin() { invMass = 0; vel = (0.0, 0.0); }
@@ -38,7 +39,22 @@ public:
 
   void boundary_collision(const Vec2& lower_bounds, const Vec2& upper_bounds) {
     double x = pos.get_x(), y = pos.get_y();
-    if (x < lower_bounds.get_x() || x > upper_bounds.get_x()) set_vel({ restitution * vel.get_x(), restitution * -vel.get_y() });
-    if (y < lower_bounds.get_y() || y > upper_bounds.get_y()) set_vel({ restitution * -vel.get_x(), restitution * vel.get_y() }); 
+    double vx = vel.get_x(), vy = vel.get_y();
+    double lowerX = lower_bounds.get_x(), lowerY = lower_bounds.get_y();
+    double upperX = upper_bounds.get_x(), upperY = upper_bounds.get_y();
+    if (x < lowerX) {
+      set_pos({ lowerX, y });
+      set_vel({ restitution * -vx, restitution * vy });
+    } else if (x > upperX) {
+      set_pos({ upperX, y });
+      set_vel({ restitution * -vx, restitution * vy });
+    }
+    if (y < lowerY) {
+      set_pos({ x, lowerY });
+      set_vel({ restitution * vx, restitution * -vy });
+    } else if (y > upperY) {
+      set_pos({ x, upperY });
+      set_vel({ restitution * vx, restitution * -vy });
+    }
   }
 };
