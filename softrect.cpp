@@ -86,7 +86,7 @@ public:
     for (int i = 0, j = sz-1; i < sz; j = i++) {
       double v1x = particles[boundary[i]].get_pos().get_x(), v1y = particles[boundary[i]].get_pos().get_y();
       double v2x = particles[boundary[j]].get_pos().get_x(), v2y = particles[boundary[j]].get_pos().get_y();
-      if (v2y != v1y && (py-v1y)*(v2x-v1x)/(v2y-v1y) + v1x >= px) {
+      if (v2y != v1y && ((v1y > py) != (v2y > py)) && (py-v1y)*(v2x-v1x)/(v2y-v1y) + v1x >= px) {
         inside = !inside;
       }
     }
