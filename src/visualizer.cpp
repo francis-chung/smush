@@ -4,6 +4,7 @@
 #include <sstream>
 
 std::string world_to_json(const World& world) {
+  std::cerr << "=== JSON generation ===" << std::endl;
   std::ostringstream json;
   json << "{\"particles\":[";
 
@@ -16,8 +17,9 @@ std::string world_to_json(const World& world) {
       nanCount++;
       if (firstNanIdx == -1) firstNanIdx = i;
     }
-    json << "{\"x\":" << (std::isnan(pos.get_x()) ? 0 : pos.get_x()) 
-         << ",\"y\":" << (std::isnan(pos.get_y()) ? 0 : pos.get_y()) << "}";
+    // json << "{\"x\":" << (std::isnan(pos.get_x()) ? 0 : pos.get_x()) 
+    //      << ",\"y\":" << (std::isnan(pos.get_y()) ? 0 : pos.get_y()) << "}";
+    json << "{\"x\":" << pos.get_x() << ",\"y\":" << pos.get_y() << "}";
     if (i < particles.size() - 1) json << ",";
   }
 
@@ -25,6 +27,7 @@ std::string world_to_json(const World& world) {
   json << "\"nan_count\":" << nanCount;
   json << ",\"first_nan_idx\":" << firstNanIdx;
   json << "}";
+  std::cerr << "NaN count: " << nanCount << ", first at: " << firstNanIdx << std::endl;
 
   json << ",\"rects\":[";
   const auto& rects = world.get_rects();

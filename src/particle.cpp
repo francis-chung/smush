@@ -12,7 +12,7 @@ private:
   double restitution;
 
 public:
-  Particle(Vec2 p, Vec2 v, double mass, double rest) : pos(p), vel(v), forceAcc(0.0), mass(mass), restitution(rest) {
+  Particle(Vec2 p, Vec2 v, double mass, double rest) : pos(p), vel(v), forceAcc(), mass(mass), restitution(rest) {
     assert(mass > 0);
     invMass = 1.0 / mass;
   }
@@ -33,7 +33,7 @@ public:
   void integrate(double dt, double ld) {
     Vec2 acc = forceAcc * invMass;
     vel += acc*dt;
-    vel *= pow(ld, dt);
+    vel *= exp(-ld * dt);
     pos += vel*dt;
   }
 

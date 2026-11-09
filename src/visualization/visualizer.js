@@ -96,7 +96,12 @@ let fps = 0;
 
 async function pollState() {
   try {
-    const response = await fetch("physics_state.json?t=" + Date.now());
+    const response = await fetch("physics_state.json?t=" + Date.now(), {
+      cache: "no-store",
+      header: {
+        "Cache-Control": "no-cache",
+      },
+    });
     const state = await response.json();
 
     render(state);
@@ -110,7 +115,7 @@ async function pollState() {
         `<div>NaN particles: ${state.debug.nan_count ? state.debug.nan_count : 0}</div>`;
     }
   } catch (e) {
-    throw new Error(e);
+    console.error("failed to fetch state:", e);
   }
 
   requestAnimationFrame(pollState);
