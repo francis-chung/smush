@@ -8,14 +8,25 @@ std::string world_to_json(const World& world) {
   json << "{\"particles\":[";
 
   const auto& particles = world.get_particles();
+  int nanCount = 0;
+  int firstNanIdx = -1;
   for (size_t i = 0; i < particles.size(); ++i) {
     const Vec2& pos = particles[i].get_pos();
+    if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
+      nanCount++;
+      if (firstNanIdx == -1) firstNanIdx = i;
+    }
     json << "{\"x\":" << (std::isnan(pos.get_x()) ? 0 : pos.get_x()) 
          << ",\"y\":" << (std::isnan(pos.get_y()) ? 0 : pos.get_y()) << "}";
     if (i < particles.size() - 1) json << ",";
   }
 
-  json << "],\"rects\":[";
+  json << "],\"debug\":{";
+  json << "\"nan_count\":" << nanCount;
+  json << ",\"first_nan_idx\":" << firstNanIdx;
+  json << "}";
+
+  json << ",\"rects\":[";
   const auto& rects = world.get_rects();
   for (size_t i = 0; i < rects.size(); ++i) {
     json << "{\"nx\":" << rects[i].get_nx()

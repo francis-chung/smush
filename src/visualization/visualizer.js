@@ -105,6 +105,10 @@ async function pollState() {
     fps = Math.round(1000 / (now - lastFrameTime));
     lastFrameTime = now;
     document.getElementById("fps").textContent = fps;
+    if (state.debug) {
+      document.getElementById("info").innerHTML +=
+        `<div>NaN particles: ${state.debug.nan_count ? state.debug.nan_count : 0}</div>`;
+    }
   } catch (e) {
     throw new Error(e);
   }

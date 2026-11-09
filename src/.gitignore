@@ -1,0 +1,5 @@
+*.exe
+*.o
+*.out
+main
+physics_state*.json

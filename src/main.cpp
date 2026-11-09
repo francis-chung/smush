@@ -2,7 +2,7 @@
 #include "solver.cpp"
 
 int main() {
-  double linearDamp = 0.05;
+  double linearDamp = 0.95;
   Vec2 lower_bounds = Vec2(-50.0, -50.0);
   Vec2 upper_bounds = Vec2(50.0, 50.0);
 
