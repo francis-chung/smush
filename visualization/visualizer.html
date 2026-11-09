@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Physics Visualizer</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #1a1a1a;
+        font-family: monospace;
+        color: #fff;
+      }
+      canvas {
+        display: block;
+        background: #0a0a0a;
+      }
+      #info {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info">
+      <div>FPS: <span id="fps">--</span></div>
+      <div>Particles: <span id="particleCount">--</span></div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="visualizer.js"></script>
+  </body>
+</html>
