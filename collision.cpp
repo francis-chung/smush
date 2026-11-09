@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class CollisionManager{
+class CollisionManager {
 private: 
   std::vector<Particle>& particles;
   std::vector<SoftRect>& rects;

@@ -22,6 +22,9 @@ public:
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, int subdiv) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv));
   }
+  void add_rect(SoftRect r) {
+    rects.push_back(r);
+  }
   
   void pin_particle(SoftRect& rect, int i, int j) { 
     if (i < 0 || i >= rect.get_nx() || j < 0 || j >= rect.get_ny()) { return; }
