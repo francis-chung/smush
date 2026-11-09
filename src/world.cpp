@@ -5,6 +5,8 @@
 #include "softrect.cpp"
 #include "collision.cpp"
 
+#include <iostream>
+
 class World {
 private:
   std::vector<Particle> particles;
@@ -47,5 +49,14 @@ public:
       p.boundary_collision(lower_bounds, upper_bounds);
     }
     colls.update();
+  }
+
+  void debug_particles() {
+    for (int i = 0; i < (int)particles.size(); ++i) {
+      Vec2 pos = particles[i].get_pos();
+      if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
+        std::cout << "Particle " << i << " has NaN position\n";
+      }
+    }
   }
 };
