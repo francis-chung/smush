@@ -46,7 +46,7 @@ public:
         
         // write state to file every 2 frames
         if (frameCount++ % 2 == 0) {
-          std::ofstream out("physics_state.json");
+          std::ofstream out("visualization/physics_state.json");
           out << world_to_json(world);
           out.close();
         }

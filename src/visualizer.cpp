@@ -10,7 +10,8 @@ std::string world_to_json(const World& world) {
   const auto& particles = world.get_particles();
   for (size_t i = 0; i < particles.size(); ++i) {
     const Vec2& pos = particles[i].get_pos();
-    json << "{\"x\":" << pos.get_x() << ",\"y\":" << pos.get_y() << "}";
+    json << "{\"x\":" << (std::isnan(pos.get_x()) ? 0 : pos.get_x()) 
+         << ",\"y\":" << (std::isnan(pos.get_y()) ? 0 : pos.get_y()) << "}";
     if (i < particles.size() - 1) json << ",";
   }
 

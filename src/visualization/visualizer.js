@@ -78,7 +78,7 @@ function render(state) {
           drawSpring(p, next);
         }
         if (i + 1 < nx && j > 0) {
-          const next = state.particles(idx + ny - 1);
+          const next = state.particles[idx + ny - 1];
           drawSpring(p, next);
         }
       }
