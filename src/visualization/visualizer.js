@@ -25,6 +25,8 @@ function drawParticle(x, y) {
   ctx.arc(screen.x, screen.y, 3, 0, Math.PI * 2);
   ctx.fillStyle = "#4CAF50";
   ctx.fill();
+  document.getElementById("info").innerHTML +=
+    `<div>particle (${x}, ${y})</div>`;
 }
 
 function drawSpring(p1, p2) {
@@ -61,6 +63,7 @@ function render(state) {
       for (let j = 0; j < ny; j++) {
         const idx = startIdx + i * ny + j;
         const p = state.particles[idx];
+        drawParticle(p.x, p.y);
 
         // structural springs (horizontal)
         if (j + 1 < ny) {
@@ -122,3 +125,17 @@ async function pollState() {
 }
 
 pollState();
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "r") {
+    viewX = 0;
+    viewY = 0;
+    scale = 5;
+  }
+  if (e.key === "-") {
+    scale *= 0.8;
+  }
+  if (e.key === "=") {
+    scale *= 1.25;
+  }
+});

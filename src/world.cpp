@@ -14,7 +14,7 @@ private:
   CollisionManager colls;
   double linearDamping;
   Vec2 lower_bounds, upper_bounds;
-  inline static const Vec2 g = Vec2(0, -9.81);
+  inline static const Vec2 g = Vec2(0, -0.981);
 
 public:
   World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = Vec2(1e9, 1e9)) : 

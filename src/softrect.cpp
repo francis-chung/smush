@@ -48,7 +48,7 @@ public:
         Vec2 vel = Vec2(0, 0);
         Particle p = Particle(pos, vel, pm, restitution);
         particles.push_back(p);
-        grid[(int)grid.size()-1].push_back((int)particles.size()-1);
+        grid[i].push_back((int)particles.size()-1);
       }
     }
     for (int i = 1; i < ny; ++i)   boundary.push_back(grid[nx-1][i]);
@@ -56,9 +56,9 @@ public:
     for (int i = 1; i < nx; ++i)   boundary.push_back(grid[nx-1-i][ny-1]);
     for (int i = 1; i < ny-1; ++i) boundary.push_back(grid[0][ny-1-i]);
     
-    double strStiff = 1.0, strDamp = 0.9;
-    double sheStiff = 0.3, sheDamp = 0.9;
-    double benStiff = 0.3, benDamp = 0.9;
+    double strStiff = 100.0, strDamp = 0.5;
+    double sheStiff = 30.0, sheDamp = 0.5;
+    double benStiff = 30.0, benDamp = 0.6;
     for (int i = 0; i < nx; ++i) {
       for (int j = 0; j < ny; ++j) {
         int p1 = grid[i][j];
