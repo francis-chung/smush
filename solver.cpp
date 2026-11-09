@@ -1,14 +1,15 @@
 #include "softrect.cpp"
 #include "world.cpp"
+#include "visualizer.cpp"
 
 #include <vector>
 #include <chrono> 
 #include <thread>
+#include <fstream>
 
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
 using Duration = std::chrono::duration<double>;
-
 
 class Solver {
 public: 
@@ -28,6 +29,7 @@ public:
     double accum = 0.0;
 
     bool running = true;
+    static int frameCount = 0;
     while (running) {
       TimePoint newTime = Clock::now();
       Duration frameTime = newTime - currentTime;
@@ -41,6 +43,13 @@ public:
       while (accum >= fixedDeltaTime) {
         world.update(fixedDeltaTime);
         accum -= fixedDeltaTime;
+        
+        // write state to file every 2 frames
+        if (frameCount++ % 2 == 0) {
+          std::ofstream out("physics_state.json");
+          out << world_to_json(world);
+          out.close();
+        }
       }
 
       // sleep briefly to prevent 100% CPU pinning

@@ -19,6 +19,9 @@ public:
     particles(std::vector<Particle>()), rects(std::vector<SoftRect>()), 
     colls(particles, rects), linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
 
+  const std::vector<Particle>& get_particles() const { return particles; }
+  const std::vector<SoftRect>& get_rects() const { return rects; }
+
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, int subdiv) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv));
   }

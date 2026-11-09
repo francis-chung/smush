@@ -20,7 +20,8 @@ class SoftRect {
 private: 
   double w, h;
   double mass, restitution;
-  int nx, ny;   // number of particles aligned to axes
+  int nx, ny;                             // number of particles aligned to axes
+  int partStartIdx;                       // first index of particles part of SoftRect 
   std::vector<std::vector<int>> grid;
   std::vector<int> boundary;
   std::vector<Spring> springs;
@@ -33,7 +34,7 @@ private:
 
 public:
   SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, int subd) :
-    w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1)
+    w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx((int)particles.size())
   {
     double pm = mass / (nx * ny);
     double px = p.get_x(), py = p.get_y();
@@ -74,6 +75,7 @@ public:
   int get_particle(int i, int j) const { return grid[i][j]; }
   int get_nx() const { return nx; }
   int get_ny() const { return ny; }
+  int get_start_idx() const { return partStartIdx; }
 
   void update_springs(std::vector<Particle>& particles) {
     for (Spring& s : springs) { s.apply_spring_force(particles); }
