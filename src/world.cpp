@@ -34,15 +34,15 @@ public:
     if (i < 0 || i >= rect.get_nx() || j < 0 || j >= rect.get_ny()) { return; }
     particles[rect.get_particle(i, j)].pin(); 
   }
-  void set_rect_force(size_t rectIndex, const Vec2& force) {
+  void set_rect_force(std::size_t rectIndex, const Vec2& force) {
     rects.at(rectIndex).set_external_force(force);
   }
-  void apply_external_impulse(size_t rectIndex, const Vec2& impulse) {
+  void apply_external_impulse(std::size_t rectIndex, const Vec2& impulse) {
     const SoftRect& r = rects.at(rectIndex);
-    size_t nx = r.get_nx(), ny = r.get_ny();
+    std::size_t nx = r.get_nx(), ny = r.get_ny();
     const Vec2 particleImpulse = impulse / (nx * ny);
-    for (size_t i = 0; i < nx; ++i) {
-      for (size_t j = 0; j < ny; ++j) {
+    for (std::size_t i = 0; i < nx; ++i) {
+      for (std::size_t j = 0; j < ny; ++j) {
         Particle& p = particles[r.get_particle(i, j)];
         const Vec2& v = p.get_vel();
         const double invM = p.get_inv_mass();
@@ -68,7 +68,7 @@ public:
   }
 
   void debug_particles() {
-    for (size_t i = 0; i < particles.size(); ++i) {
+    for (std::size_t i = 0; i < particles.size(); ++i) {
       Vec2 pos = particles[i].get_pos();
       if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
         std::cerr << "Particle " << i << " has NaN position\n" << std::flush;
