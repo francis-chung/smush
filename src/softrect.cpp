@@ -25,6 +25,7 @@ private:
   std::vector<std::vector<int>> grid;
   std::vector<int> boundary;
   std::vector<Spring> springs;
+  Vec2 externalForce{0.0, 0.0};
 
   void add_spring(std::vector<Particle>& particles, int i, int j, double stiff, double damp) {
     Vec2 d = particles[j].get_pos() - particles[i].get_pos();
@@ -85,6 +86,16 @@ public:
   int get_nx() const { return nx; }
   int get_ny() const { return ny; }
   int get_start_idx() const { return partStartIdx; }
+
+  void set_external_force(const Vec2& f) { externalForce = f; }
+  void apply_external_force(std::vector<Particle>& particles) {
+    const Vec2 particleForce = externalForce / (nx * ny);
+    for (size_t i = 0; i < nx; ++i) {
+      for (size_t j = 0; j < ny; ++j) {
+        particles[grid[i][j]].add_force(particleForce);
+      }
+    }
+  }
 
   void update_springs(std::vector<Particle>& particles) {
     for (Spring& s : springs) { s.apply_spring_force(particles); }
