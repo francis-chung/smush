@@ -26,6 +26,14 @@ public:
   Vec2& operator*=(double c) { x *= c; y *= c; return *this; }
 
   double normsq() { return x*x + y*y; }
+  const double normsq() const { return normsq(); }
   double norm() { return sqrt(normsq()); }
+  const double norm() const { return norm(); }
   friend double dot(const Vec2& v1, const Vec2& v2) { return v1.x*v2.x + v1.y*v2.y; }
+  friend Vec2 proj(const Vec2& u, const Vec2& v) {
+    return dot(u, v) / u.normsq() * u;
+  }
+  friend Vec2 perp(const Vec2& u, const Vec2& v) {
+    return v - proj(u, v);
+  }
 };
