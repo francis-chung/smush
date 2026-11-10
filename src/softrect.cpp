@@ -86,6 +86,7 @@ public:
   int get_nx() const { return nx; }
   int get_ny() const { return ny; }
   int get_start_idx() const { return partStartIdx; }
+  const std::vector<int>& get_boundary() const { return boundary; }
 
   void set_external_force(const Vec2& f) { externalForce = f; }
   void apply_external_force(std::vector<Particle>& particles) {
