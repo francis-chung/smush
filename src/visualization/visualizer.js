@@ -25,8 +25,6 @@ function drawParticle(x, y) {
   ctx.arc(screen.x, screen.y, 3, 0, Math.PI * 2);
   ctx.fillStyle = "#4CAF50";
   ctx.fill();
-  document.getElementById("info").innerHTML +=
-    `<div>particle (${x}, ${y})</div>`;
 }
 
 function drawSpring(p1, p2) {
@@ -41,6 +39,11 @@ function drawSpring(p1, p2) {
 }
 
 function render(state) {
+  document.getElementById("info").innerHTML = `
+    <div>FPS: <span id="fps">${fps}</span></div>
+    <div>Particles: ${state.particles.length}</div>
+  `;
+
   // clear canvas
   ctx.fillStyle = "#0a0a0a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -63,7 +66,6 @@ function render(state) {
       for (let j = 0; j < ny; j++) {
         const idx = startIdx + i * ny + j;
         const p = state.particles[idx];
-        drawParticle(p.x, p.y);
 
         // structural springs (horizontal)
         if (j + 1 < ny) {
@@ -91,7 +93,11 @@ function render(state) {
   // draw particles on top
   state.particles.forEach((p) => drawParticle(p.x, p.y));
 
-  document.getElementById("particleCount").textContent = state.particles.length;
+  if (state.particles.length > 0) {
+    const p0 = state.particles[0];
+    document.getElementById("info").innerHTML +=
+      `<div>First particle: (${p0.x.toFixed(2)}, ${p0.y.toFixed(2)})</div>`;
+  }
 }
 
 let lastFrameTime = Date.now();
