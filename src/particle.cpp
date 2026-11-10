@@ -27,7 +27,7 @@ public:
   void set_pos(const Vec2& p) { pos = p; }
   void set_vel(const Vec2& v) { vel = v; }
 
-  void pin() { invMass = 0; vel = Vec2(0.0, 0.0); }
+  void pin() { invMass = 0; vel = (0.0, 0.0); }
   void unpin() { invMass = 1.0 / mass; }
 
   void integrate(double dt, double ld) {

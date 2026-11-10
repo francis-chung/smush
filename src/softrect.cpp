@@ -9,7 +9,7 @@ private:
   Vec2 min, max;
 
 public: 
-  AABB() : min(Vec2(0, 0)), max(Vec2(0, 0)) {}
+  AABB() : min(), max() {}
   AABB(Vec2 min, Vec2 max) : min(min), max(max) {}
 
   const Vec2& get_min() const { return min; }
@@ -37,7 +37,6 @@ public:
     w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx((int)particles.size())
   {
     double pm = mass / (nx * ny);
-    double px = p.get_x(), py = p.get_y();
 
     const Vec2 center = p + Vec2(wd * 0.5, hi * 0.5);
     const double c = std::cos(angleRad);
@@ -46,6 +45,7 @@ public:
     for (int i = 0; i < nx; ++i) {
       grid.push_back(std::vector<int>());
       for (int j = 0; j < ny; ++j) {
+        // get coordinates relative to center first
         const double localX = (wd / subd) * i - wd * 0.5;
         const double localY = (hi / subd) * j - hi * 0.5;
         const Vec2 rotatedFromCenter(
@@ -115,9 +115,9 @@ public:
         minY = std::min(minY, cy); maxY = std::max(maxY, cy);
       }
     }
-    Vec2 min_pos = Vec2(minX, minY);
-    Vec2 max_pos = Vec2(maxX, maxY);
-    AABB aabb = AABB(min_pos, max_pos);
+    Vec2 min_pos(minX, minY);
+    Vec2 max_pos(maxX, maxY);
+    AABB aabb(min_pos, max_pos);
     return aabb;
   }
 

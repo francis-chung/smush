@@ -17,9 +17,8 @@ private:
   inline static const Vec2 g = Vec2(0, -9.81);
 
 public:
-  World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = Vec2(1e9, 1e9)) : 
-    particles(std::vector<Particle>()), rects(std::vector<SoftRect>()), 
-    colls(particles, rects), linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
+  World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = (1e9, 1e9)) : 
+    particles(), rects(), colls(particles, rects), linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
 
   const std::vector<Particle>& get_particles() const { return particles; }
   const std::vector<SoftRect>& get_rects() const { return rects; }
@@ -38,7 +37,7 @@ public:
 
   void update(double dt) {
     for (Particle& p : particles) {
-      p.set_force_acc(Vec2(0, 0));
+      p.set_force_acc((0, 0));
       p.add_force(g * p.get_mass());
     }
     for (SoftRect& r : rects) {

@@ -15,7 +15,7 @@ class Solver {
 public: 
   World world;
 
-  Solver(double linearDamp, Vec2 lower_bounds, Vec2 upper_bounds, std::vector<SoftRect> rects = std::vector<SoftRect>()) : 
+  Solver(double linearDamp, Vec2 lower_bounds, Vec2 upper_bounds, std::vector<SoftRect> rects = {}) : 
     world(linearDamp, lower_bounds, upper_bounds) {
     for (SoftRect& r : rects) {
       world.add_rect(r);
