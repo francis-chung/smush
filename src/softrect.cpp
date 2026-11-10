@@ -20,8 +20,8 @@ class SoftRect {
 private: 
   double w, h;
   double mass, restitution;
-  int nx, ny;                             // number of particles aligned to axes
-  int partStartIdx;                       // first index of particles part of SoftRect 
+  size_t nx, ny;                             // number of particles aligned to axes
+  size_t partStartIdx;                       // first index of particles part of SoftRect 
   std::vector<std::vector<int>> grid;
   std::vector<int> boundary;
   std::vector<Spring> springs;
@@ -34,7 +34,7 @@ private:
 
 public:
   SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, int subd, double angleRad = 0.0) :
-    w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx((int)particles.size())
+    w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx(particles.size())
   {
     double pm = mass / (nx * ny);
 
@@ -42,9 +42,9 @@ public:
     const double c = std::cos(angleRad);
     const double s = std::sin(angleRad);
 
-    for (int i = 0; i < nx; ++i) {
+    for (size_t i = 0; i < nx; ++i) {
       grid.push_back(std::vector<int>());
-      for (int j = 0; j < ny; ++j) {
+      for (size_t j = 0; j < ny; ++j) {
         // get coordinates relative to center first
         const double localX = (wd / subd) * i - wd * 0.5;
         const double localY = (hi / subd) * j - hi * 0.5;
@@ -60,16 +60,16 @@ public:
         grid[i].push_back((int)particles.size()-1);
       }
     }
-    for (int i = 1; i < ny; ++i)   boundary.push_back(grid[nx-1][i]);
-    for (int i = 0; i < nx; ++i)   boundary.push_back(grid[i][0]);
-    for (int i = 1; i < nx; ++i)   boundary.push_back(grid[nx-1-i][ny-1]);
-    for (int i = 1; i < ny-1; ++i) boundary.push_back(grid[0][ny-1-i]);
+    for (size_t i = 1; i < ny; ++i)   boundary.push_back(grid[nx-1][i]);
+    for (size_t i = 0; i < nx; ++i)   boundary.push_back(grid[i][0]);
+    for (size_t i = 1; i < nx; ++i)   boundary.push_back(grid[nx-1-i][ny-1]);
+    for (size_t i = 1; i < ny-1; ++i) boundary.push_back(grid[0][ny-1-i]);
     
     double strStiff = 30.0, strDamp = 0.5;
     double sheStiff = 20.0, sheDamp = 0.5;
     double benStiff = 20.0, benDamp = 0.6;
-    for (int i = 0; i < nx; ++i) {
-      for (int j = 0; j < ny; ++j) {
+    for (size_t i = 0; i < nx; ++i) {
+      for (size_t j = 0; j < ny; ++j) {
         int p1 = grid[i][j];
         if (j+1 < ny)              add_spring(particles, p1, grid[i][j+1], strStiff, strDamp); 
         if (i+1 < nx)              add_spring(particles, p1, grid[i+1][j], strStiff, strDamp); 
@@ -93,8 +93,8 @@ public:
   bool point_in_polygon(int pIndex, const std::vector<Particle>& particles) {
     double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
     bool inside = false;
-    int sz = (int)boundary.size();
-    for (int i = 0, j = sz-1; i < sz; j = i++) {
+    size_t sz = boundary.size();
+    for (size_t i = 0, j = sz-1; i < sz; j = i++) {
       double v1x = particles[boundary[i]].get_pos().get_x(), v1y = particles[boundary[i]].get_pos().get_y();
       double v2x = particles[boundary[j]].get_pos().get_x(), v2y = particles[boundary[j]].get_pos().get_y();
       if (v2y != v1y && ((v1y > py) != (v2y > py)) && (py-v1y)*(v2x-v1x)/(v2y-v1y) + v1x >= px) {
@@ -107,8 +107,8 @@ public:
   AABB get_aabb(const std::vector<Particle>& particles) {
     double minX = particles[grid[0][0]].get_pos().get_x(), maxX = particles[grid[0][0]].get_pos().get_x();
     double minY = particles[grid[0][0]].get_pos().get_y(), maxY = particles[grid[0][0]].get_pos().get_y();
-    for (int i = 0; i < nx; ++i) {
-      for (int j = 0; j < ny; ++j) {
+    for (size_t i = 0; i < nx; ++i) {
+      for (size_t j = 0; j < ny; ++j) {
         double cx = particles[grid[i][j]].get_pos().get_x();
         double cy = particles[grid[i][j]].get_pos().get_y();
         minX = std::min(minX, cx); maxX = std::max(maxX, cx);
@@ -133,8 +133,8 @@ public:
     std::vector<int> points;
     double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
     double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
-    for (int i = 0; i < nx; ++i) {
-      for (int j = 0; j < ny; ++j) {
+    for (size_t i = 0; i < nx; ++i) {
+      for (size_t j = 0; j < ny; ++j) {
         int p = grid[i][j];
         int x = particles[p].get_pos().get_x();
         int y = particles[p].get_pos().get_y();

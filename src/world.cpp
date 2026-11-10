@@ -51,7 +51,7 @@ public:
   }
 
   void debug_particles() {
-    for (int i = 0; i < (int)particles.size(); ++i) {
+    for (size_t i = 0; i < particles.size(); ++i) {
       Vec2 pos = particles[i].get_pos();
       if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
         std::cerr << "Particle " << i << " has NaN position\n" << std::flush;
