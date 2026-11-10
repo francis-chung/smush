@@ -37,6 +37,19 @@ public:
   void set_rect_force(size_t rectIndex, const Vec2& force) {
     rects.at(rectIndex).set_external_force(force);
   }
+  void apply_external_impulse(size_t rectIndex, const Vec2& impulse) {
+    const SoftRect& r = rects.at(rectIndex);
+    size_t nx = r.get_nx(), ny = r.get_ny();
+    const Vec2 particleImpulse = impulse / (nx * ny);
+    for (size_t i = 0; i < nx; ++i) {
+      for (size_t j = 0; j < ny; ++j) {
+        Particle& p = particles[r.get_particle(i, j)];
+        const Vec2& v = p.get_vel();
+        const double invM = p.get_inv_mass();
+        particles[r.get_particle(i, j)].set_vel(v + particleImpulse * invM);
+      }
+    }
+  }
 
   void update(double dt) {
     for (Particle& p : particles) {
