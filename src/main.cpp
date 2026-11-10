@@ -7,8 +7,12 @@ int main() {
   Vec2 upper_bounds(50.0, 50.0);
 
   Solver solver = Solver(linearDamp, lower_bounds, upper_bounds);
-  solver.world.add_rect(Vec2(-10, 20), 10, 10, 1.0, 0.8, 5);
-  solver.world.add_rect(Vec2(5, 30), 8, 8, 1.0, 0.8, 4);
+
+  const double pi = std::acos(-1.0);
+  const double angle1 = 25.0 * pi / 180.0;
+  const double angle2 = 55.0 * pi / 180.0;
+  solver.world.add_rect(Vec2(-10, 20), 10, 10, 1.0, 0.8, 5, angle1);
+  solver.world.add_rect(Vec2(5, 30), 8, 8, 1.0, 0.8, 4, angle2);
 
   solver.run();
 }
