@@ -56,9 +56,9 @@ public:
     for (int i = 1; i < nx; ++i)   boundary.push_back(grid[nx-1-i][ny-1]);
     for (int i = 1; i < ny-1; ++i) boundary.push_back(grid[0][ny-1-i]);
     
-    double strStiff = 100.0, strDamp = 0.5;
-    double sheStiff = 30.0, sheDamp = 0.5;
-    double benStiff = 30.0, benDamp = 0.6;
+    double strStiff = 30.0, strDamp = 0.5;
+    double sheStiff = 20.0, sheDamp = 0.5;
+    double benStiff = 20.0, benDamp = 0.6;
     for (int i = 0; i < nx; ++i) {
       for (int j = 0; j < ny; ++j) {
         int p1 = grid[i][j];

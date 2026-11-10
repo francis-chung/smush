@@ -9,7 +9,21 @@ function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
+
 window.addEventListener("resize", resizeCanvas);
+window.addEventListener("keydown", (e) => {
+  if (e.key === "r") {
+    viewX = 0;
+    viewY = 0;
+    scale = 5;
+  }
+  if (e.key === "-") {
+    scale *= 0.8;
+  }
+  if (e.key === "=") {
+    scale *= 1.25;
+  }
+});
 resizeCanvas();
 
 function worldToScreen(x, y) {
@@ -67,12 +81,11 @@ function render(state) {
         const idx = startIdx + i * ny + j;
         const p = state.particles[idx];
 
-        // structural springs (horizontal)
+        // structural springs
         if (j + 1 < ny) {
           const next = state.particles[idx + 1];
           drawSpring(p, next);
         }
-        // structural springs (vertical)
         if (i + 1 < nx) {
           const next = state.particles[idx + ny];
           drawSpring(p, next);
@@ -92,12 +105,6 @@ function render(state) {
 
   // draw particles on top
   state.particles.forEach((p) => drawParticle(p.x, p.y));
-
-  if (state.particles.length > 0) {
-    const p0 = state.particles[0];
-    document.getElementById("info").innerHTML +=
-      `<div>First particle: (${p0.x.toFixed(2)}, ${p0.y.toFixed(2)})</div>`;
-  }
 }
 
 let lastFrameTime = Date.now();
@@ -119,10 +126,6 @@ async function pollState() {
     fps = Math.round(1000 / (now - lastFrameTime));
     lastFrameTime = now;
     document.getElementById("fps").textContent = fps;
-    if (state.debug) {
-      document.getElementById("info").innerHTML +=
-        `<div>NaN particles: ${state.debug.nan_count ? state.debug.nan_count : 0}</div>`;
-    }
   } catch (e) {
     console.error("failed to fetch state:", e);
   }
@@ -131,17 +134,3 @@ async function pollState() {
 }
 
 pollState();
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "r") {
-    viewX = 0;
-    viewY = 0;
-    scale = 5;
-  }
-  if (e.key === "-") {
-    scale *= 0.8;
-  }
-  if (e.key === "=") {
-    scale *= 1.25;
-  }
-});
