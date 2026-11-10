@@ -33,19 +33,28 @@ private:
   }
 
 public:
-  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, int subd) :
+  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, int subd, double angleRad = 0.0) :
     w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx((int)particles.size())
   {
     double pm = mass / (nx * ny);
     double px = p.get_x(), py = p.get_y();
 
+    const Vec2 center = p + Vec2(wd * 0.5, hi * 0.5);
+    const double c = std::cos(angleRad);
+    const double s = std::sin(angleRad);
+
     for (int i = 0; i < nx; ++i) {
       grid.push_back(std::vector<int>());
       for (int j = 0; j < ny; ++j) {
-        double x = px + (wd / subd) * i;
-        double y = py + (hi / subd) * j;
-        Vec2 pos = Vec2(x, y);
-        Vec2 vel = Vec2(0, 0);
+        const double localX = (wd / subd) * i - wd * 0.5;
+        const double localY = (hi / subd) * j - hi * 0.5;
+        const Vec2 rotatedFromCenter(
+          c * localX - s * localY, 
+          s * localX + c * localY
+        );
+
+        Vec2 pos = center + rotatedFromCenter;
+        Vec2 vel(0.0, 0.0);
         Particle p = Particle(pos, vel, pm, restitution);
         particles.push_back(p);
         grid[i].push_back((int)particles.size()-1);
