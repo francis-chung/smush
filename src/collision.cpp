@@ -18,7 +18,6 @@ public:
     const std::vector<int>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
     double minDist = __DBL_MAX__;
-    const Particle *p1 = nullptr, *p2 = nullptr;
     Vec2 *minNormal = nullptr;
     for (size_t i = 0, j = sz-1; i < sz; j = i++) {
       const Particle& tmp1 = particles[boundary[i]], tmp2 = particles[boundary[j]];
@@ -29,7 +28,6 @@ public:
       double dist = pointProj.norm();
       if (dist < minDist) {
         minDist = dist;
-        p1 = &tmp1, p2 = &tmp2;
         minNormal = &normal;
       }
     }
@@ -49,13 +47,17 @@ public:
         std::vector<int> iPointsCandidates = rects[i].point_candidates_in_polygon(particles, aabbs[j]);
         std::vector<int> jPointsCandidates = rects[j].point_candidates_in_polygon(particles, aabbs[i]);
         for (std::size_t k = 0; k < iPointsCandidates.size(); ++k) {
-          if (rects[j].point_in_polygon(iPointsCandidates[k], particles)) {
+          int candidate = iPointsCandidates[k];
+          if (rects[j].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for j particle inside i
+            collision_displace(particles[candidate], rects[j]);
           }
         }
         for (std::size_t k = 0; k < jPointsCandidates.size(); ++k) {
-          if (rects[i].point_in_polygon(jPointsCandidates[k], particles)) {
+          int candidate = jPointsCandidates[k];
+          if (rects[i].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for i particle inside j
+            collision_displace(particles[candidate], rects[i]);
           }
         }
       }
