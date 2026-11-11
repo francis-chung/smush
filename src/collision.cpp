@@ -15,9 +15,6 @@ public:
   CollisionManager(std::vector<Particle>& parts, std::vector<SoftRect>& recs) : particles(parts), rects(recs) {}
 
   void collision_resolution(Particle& p, SoftRect& rect, double restitution) {
-    // ignore pinned particles
-    if (!p.get_inv_mass()) return;
-
     // find the nearest edge of the polygon to the point and prep displacement
     const std::vector<std::size_t>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
@@ -44,7 +41,7 @@ public:
     }
     if (a != nullptr) {
       // apply displacement to displace the point outside the polygon
-      p.set_pos(p.get_pos() + displacement);
+      if (p.get_inv_mass()) p.set_pos(p.get_pos() + displacement);
 
       // calculate impulses after collision for point and vertices of polygon edge
       double depth = displacement.norm();
@@ -64,9 +61,9 @@ public:
       // magnitude of impulse on either side of the collision
       double j = -(1.0 + restitution) * vn / denom;
       Vec2 J = j * n;
-      p.set_vel(p.get_vel() + p.get_inv_mass() * J);
-      a->set_vel(a->get_vel() - weightA * a->get_inv_mass() * J);
-      b->set_vel(b->get_vel() - weightB * b->get_inv_mass() * J);
+      if (p.get_inv_mass()) p.set_vel(p.get_vel() + p.get_inv_mass() * J);
+      if (a->get_inv_mass()) a->set_vel(a->get_vel() - weightA * a->get_inv_mass() * J);
+      if (b->get_inv_mass()) b->set_vel(b->get_vel() - weightB * b->get_inv_mass() * J);
     }
   }
   
