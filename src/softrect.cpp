@@ -22,19 +22,19 @@ private:
   double mass, restitution;
   std::size_t nx, ny;                             // number of particles aligned to axes
   std::size_t partStartIdx;                       // first index of particles part of SoftRect 
-  std::vector<std::vector<int>> grid;
-  std::vector<int> boundary;
+  std::vector<std::vector<std::size_t>> grid;
+  std::vector<std::size_t> boundary;
   std::vector<Spring> springs;
   Vec2 externalForce{0.0, 0.0};
 
-  void add_spring(std::vector<Particle>& particles, int i, int j, double stiff, double damp) {
+  void add_spring(std::vector<Particle>& particles, std::size_t i, std::size_t j, double stiff, double damp) {
     Vec2 d = particles[j].get_pos() - particles[i].get_pos();
     double len = d.norm();
     springs.push_back(Spring(i, j, len, stiff, damp));
   }
 
 public:
-  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, int subd, double angleRad = 0.0) :
+  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) :
     w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx(particles.size())
   {
     double pm = mass / (nx * ny);
@@ -44,7 +44,7 @@ public:
     const double s = std::sin(angleRad);
 
     for (std::size_t i = 0; i < nx; ++i) {
-      grid.push_back(std::vector<int>());
+      grid.push_back(std::vector<std::size_t>());
       for (std::size_t j = 0; j < ny; ++j) {
         // get coordinates relative to center first
         const double localX = (wd / subd) * i - wd * 0.5;
@@ -55,10 +55,10 @@ public:
         );
 
         Vec2 pos = center + rotatedFromCenter;
-        Vec2 vel(0.0, 0.0);
+        Vec2 vel{0.0, 0.0};
         Particle p = Particle(pos, vel, pm, restitution);
         particles.push_back(p);
-        grid[i].push_back((int)particles.size()-1);
+        grid[i].push_back(particles.size()-1);
       }
     }
     for (std::size_t i = 0; i < nx; ++i)   boundary.push_back(grid[i][0]);
@@ -82,11 +82,11 @@ public:
     }
   }
 
-  std::size_t get_particle(int i, int j) const { return grid[i][j]; }
-  int get_nx() const { return nx; }
-  int get_ny() const { return ny; }
-  int get_start_idx() const { return partStartIdx; }
-  const std::vector<int>& get_boundary() const { return boundary; }
+  std::size_t get_particle(std::size_t i, std::size_t j) const { return grid[i][j]; }
+  std::size_t get_nx() const { return nx; }
+  std::size_t get_ny() const { return ny; }
+  std::size_t get_start_idx() const { return partStartIdx; }
+  const std::vector<std::size_t>& get_boundary() const { return boundary; }
 
   void set_external_force(const Vec2& f) { externalForce = f; }
   void apply_external_force(std::vector<Particle>& particles) {
@@ -102,7 +102,7 @@ public:
     for (Spring& s : springs) { s.apply_spring_force(particles); }
   }
 
-  bool point_in_polygon(int pIndex, const std::vector<Particle>& particles) {
+  bool point_in_polygon(std::size_t pIndex, const std::vector<Particle>& particles) {
     double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
     bool inside = false;
     std::size_t sz = boundary.size();
@@ -141,8 +141,8 @@ public:
     return intersectX && intersectY;
   }
 
-  std::vector<int> point_candidates_in_polygon(const std::vector<Particle>& particles, const AABB& otherBox) {
-    std::vector<int> points;
+  std::vector<std::size_t> point_candidates_in_polygon(const std::vector<Particle>& particles, const AABB& otherBox) {
+    std::vector<std::size_t> points;
     double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
     double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
     for (std::size_t i = 0; i < nx; ++i) {

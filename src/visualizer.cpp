@@ -8,13 +8,13 @@ std::string world_to_json(const World& world) {
   json << "{\"particles\":[";
 
   const auto& particles = world.get_particles();
-  int nanCount = 0;
-  int firstNanIdx = -1;
+  std::size_t nanCount = 0;
+  std::size_t firstNanIdx = std::numeric_limits<std::size_t>::max();
   for (std::size_t i = 0; i < particles.size(); ++i) {
     const Vec2& pos = particles[i].get_pos();
     if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
       nanCount++;
-      if (firstNanIdx == -1) firstNanIdx = i;
+      if (firstNanIdx == std::numeric_limits<std::size_t>::max()) firstNanIdx = i;
     }
     json << "{\"x\":" << pos.get_x() << ",\"y\":" << pos.get_y() << "}";
     if (i < particles.size() - 1) json << ",";

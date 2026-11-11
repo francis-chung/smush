@@ -18,8 +18,8 @@ public:
   void collision_displace(Particle& p, SoftRect& rect) {
     // ignore pinned particles
     if (!p.get_inv_mass()) return;
-    
-    const std::vector<int>& boundary = rect.get_boundary();
+
+    const std::vector<std::size_t>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
     Vec2 displacement{1e9, 1e9};
     for (size_t i = 0, j = sz-1; i < sz; j = i++) {
@@ -47,17 +47,17 @@ public:
     for (std::size_t i = 0; i < n; ++i) {
       for (std::size_t j = i+1; j < n; ++j) {
         if (!rects[i].colliding_aabb(aabbs[i], aabbs[j])) continue;
-        std::vector<int> iPointsCandidates = rects[i].point_candidates_in_polygon(particles, aabbs[j]);
-        std::vector<int> jPointsCandidates = rects[j].point_candidates_in_polygon(particles, aabbs[i]);
+        std::vector<std::size_t> iPointsCandidates = rects[i].point_candidates_in_polygon(particles, aabbs[j]);
+        std::vector<std::size_t> jPointsCandidates = rects[j].point_candidates_in_polygon(particles, aabbs[i]);
         for (std::size_t k = 0; k < iPointsCandidates.size(); ++k) {
-          int candidate = iPointsCandidates[k];
+          std::size_t candidate = iPointsCandidates[k];
           if (rects[j].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for j particle inside i
             collision_displace(particles[candidate], rects[j]);
           }
         }
         for (std::size_t k = 0; k < jPointsCandidates.size(); ++k) {
-          int candidate = jPointsCandidates[k];
+          std::size_t candidate = jPointsCandidates[k];
           if (rects[i].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for i particle inside j
             collision_displace(particles[candidate], rects[i]);

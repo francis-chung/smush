@@ -7,11 +7,12 @@
 
 class Spring {
 private: 
-  int i, j;    // World's particle vector indices
+  std::size_t i, j;    // World's particle vector indices
   double restLength, stiffness, dampCoeff;
 
 public: 
-  Spring(int i, int j, double len, double st, double dc) : i(i), j(j), restLength(len), stiffness(st), dampCoeff(dc) {}
+  Spring(std::size_t i, std::size_t j, double len, double st, double dc) : 
+    i(i), j(j), restLength(len), stiffness(st), dampCoeff(dc) {}
 
   void apply_spring_force(std::vector<Particle>& particles) {
     Particle& p1 = particles[i];

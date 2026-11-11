@@ -30,7 +30,7 @@ public:
     rects.push_back(r);
   }
   
-  void pin_particle(SoftRect& rect, int i, int j) { 
+  void pin_particle(SoftRect& rect, std::size_t i, std::size_t j) { 
     if (i < 0 || i >= rect.get_nx() || j < 0 || j >= rect.get_ny()) { return; }
     particles[rect.get_particle(i, j)].pin(); 
   }

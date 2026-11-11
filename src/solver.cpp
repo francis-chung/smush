@@ -29,7 +29,7 @@ public:
     double accum = 0.0;
 
     bool running = true;
-    static int frameCount = 0;
+    static std::size_t frameCount = 0;
     while (running) {
       TimePoint newTime = Clock::now();
       Duration frameTime = newTime - currentTime;
