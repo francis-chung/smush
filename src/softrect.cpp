@@ -133,11 +133,11 @@ public:
     return aabb;
   }
 
-  bool colliding_aabb(const AABB& currentBox, const AABB& otherBox) {
+  bool colliding_aabb(const AABB& currentBox, const AABB& otherBox, double tolerance = 1e-5) {
     Vec2 cMin = currentBox.get_min(), cMax = currentBox.get_max();
     Vec2 oMin = otherBox.get_min(), oMax = otherBox.get_max();
-    bool intersectX = (std::min(cMax.get_x(), oMax.get_x()) > std::max(cMin.get_x(), oMin.get_x()));
-    bool intersectY = (std::min(cMax.get_y(), oMax.get_y()) > std::max(cMin.get_y(), oMin.get_y()));
+    bool intersectX = (std::min(cMax.get_x(), oMax.get_x()) > std::max(cMin.get_x(), oMin.get_x()) - tolerance);
+    bool intersectY = (std::min(cMax.get_y(), oMax.get_y()) > std::max(cMin.get_y(), oMin.get_y()) - tolerance);
     return intersectX && intersectY;
   }
 
