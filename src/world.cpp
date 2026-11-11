@@ -17,7 +17,7 @@ private:
   inline static const Vec2 g = Vec2(0, -9.81);
 
 public:
-  World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = (1e9, 1e9)) : 
+  World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = Vec2(1e9, 1e9)) : 
     particles(), rects(), colls(particles, rects), linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
 
   const std::vector<Particle>& get_particles() const { return particles; }

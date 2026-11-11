@@ -61,8 +61,8 @@ public:
         grid[i].push_back((int)particles.size()-1);
       }
     }
-    for (std::size_t i = 1; i < ny; ++i)   boundary.push_back(grid[nx-1][i]);
     for (std::size_t i = 0; i < nx; ++i)   boundary.push_back(grid[i][0]);
+    for (std::size_t i = 1; i < ny; ++i)   boundary.push_back(grid[nx-1][i]);
     for (std::size_t i = 1; i < nx; ++i)   boundary.push_back(grid[nx-1-i][ny-1]);
     for (std::size_t i = 1; i < ny-1; ++i) boundary.push_back(grid[0][ny-1-i]);
     
@@ -82,7 +82,7 @@ public:
     }
   }
 
-  int get_particle(int i, int j) const { return grid[i][j]; }
+  std::size_t get_particle(int i, int j) const { return grid[i][j]; }
   int get_nx() const { return nx; }
   int get_ny() const { return ny; }
   int get_start_idx() const { return partStartIdx; }
@@ -148,8 +148,8 @@ public:
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
         int p = grid[i][j];
-        int x = particles[p].get_pos().get_x();
-        int y = particles[p].get_pos().get_y();
+        double x = particles[p].get_pos().get_x();
+        double y = particles[p].get_pos().get_y();
         if (x > minX && x < maxX && y > minY && y < maxY) points.push_back(p);
       }
     }

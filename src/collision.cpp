@@ -16,6 +16,9 @@ public:
 
   // moves the particle parallel to the normal of the nearest SoftRect edge
   void collision_displace(Particle& p, SoftRect& rect) {
+    // ignore pinned particles
+    if (!p.get_inv_mass()) return;
+    
     const std::vector<int>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
     Vec2 displacement{1e9, 1e9};
