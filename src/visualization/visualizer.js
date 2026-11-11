@@ -34,7 +34,7 @@ function worldToScreen(x, y) {
 }
 
 function drawParticle(x, y) {
-  if (x === "null" || y === "null") {
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
     return;
   }
   const screen = worldToScreen(x, y);
@@ -46,10 +46,10 @@ function drawParticle(x, y) {
 
 function drawSpring(p1, p2) {
   if (
-    p1.x === "null" ||
-    p1.y === "null" ||
-    p2.x === "null" ||
-    p2.y === "null"
+    !Number.isFinite(p1.x) ||
+    !Number.isFinite(p1.y) ||
+    !Number.isFinite(p2.x) ||
+    !Number.isFinite(p2.y)
   ) {
     return;
   }
