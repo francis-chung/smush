@@ -37,6 +37,7 @@ public:
     pos += vel*dt;
   }
 
+  // pinned particles should still be moved back in bounds
   void boundary_collision(const Vec2& lower_bounds, const Vec2& upper_bounds) {
     double x = pos.get_x(), y = pos.get_y();
     double vx = vel.get_x(), vy = vel.get_y();
