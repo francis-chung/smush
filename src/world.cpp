@@ -27,7 +27,7 @@ public:
   const std::vector<Particle>& get_particles() const { return particles; }
   const std::vector<SoftRect>& get_rects() const { return rects; }
 
-  void add_rect(Vec2 origin, double w, double h, double mass, double restitution, int subdiv, double angleRad = 0.0) {
+  void add_rect(Vec2 origin, double w, double h, double mass, double restitution, std::size_t subdiv, double angleRad = 0.0) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv, angleRad));
   }
   void add_rect(SoftRect& r) {

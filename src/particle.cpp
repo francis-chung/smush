@@ -47,19 +47,19 @@ public:
     double newVx = vx, newVy = vy;
     if (x < lowerX) {
       newX = lowerX;
-      if (vx < 0) newVx = -vx;
+      if (vx < 0) newVx = -restitution * vx;
     } else if (x > upperX) {
       newX = upperX; 
-      if (vx > 0) newVx = -vx;
+      if (vx > 0) newVx = -restitution * vx;
     }
     if (y < lowerY) {
       newY = lowerY;
-      if (vy < 0) newVy = -vy;
+      if (vy < 0) newVy = -restitution * vy;
     } else if (y > upperY) {
       newY = upperY;
-      if (vy > 0) newVy = -vy;
+      if (vy > 0) newVy = -restitution * vy;
     }
     set_pos({ newX, newY });
-    set_vel({ restitution * newVx, restitution * newVy });
+    set_vel({ newVx, newVy });
   }
 };

@@ -35,14 +35,15 @@ private:
 
 public:
   SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) :
-    nx(subd + 1), ny(subd + 1), partStartIdx(particles.size())
+    partStartIdx(particles.size())
   {
     assert(wd > 0);
     assert(hi > 0);
     assert(ms > 0);
     assert(rest >= 0 && rest <= 1);
+    assert(subd > 0);
     
-    w = wd, h = hi, mass = ms, restitution = rest;
+    w = wd, h = hi, mass = ms, restitution = rest, nx = subd + 1, ny = subd + 1;
 
     double pm = mass / (nx * ny);
     const Vec2 center = p + Vec2(wd * 0.5, hi * 0.5);
