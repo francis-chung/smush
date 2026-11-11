@@ -72,27 +72,33 @@ public:
   
   void update() {
     std::size_t n = rects.size();
-    std::vector<AABB> aabbs(n);
-    for (std::size_t i = 0; i < n; ++i) {
-      aabbs[i] = rects[i].get_aabb(particles);
-    }
     
     double restitution = 0.7;
     for (std::size_t i = 0; i < n; ++i) {
       for (std::size_t j = i+1; j < n; ++j) {
-        if (!rects[i].colliding_aabb(aabbs[i], aabbs[j])) continue;
-        std::vector<std::size_t> iPointsCandidates = rects[i].point_candidates_in_polygon(particles, aabbs[j]);
-        std::vector<std::size_t> jPointsCandidates = rects[j].point_candidates_in_polygon(particles, aabbs[i]);
+        // bounding boxes can change after particle collisions are applied
+        AABB iBB = rects[i].get_aabb(particles);
+        AABB jBB = rects[j].get_aabb(particles);
+        if (!rects[i].colliding_aabb(iBB, jBB)) continue;
+
+        std::vector<std::size_t> iPointsCandidates = rects[i].point_candidates_in_polygon(particles, jBB);
+        std::vector<std::size_t> jPointsCandidates = rects[j].point_candidates_in_polygon(particles, iBB);
         for (std::size_t k = 0; k < iPointsCandidates.size(); ++k) {
           std::size_t candidate = iPointsCandidates[k];
           if (rects[j].point_in_polygon(candidate, particles)) {
             collision_resolution(particles[candidate], rects[j], restitution);
+            // regenerate candidates after collision resolution for one pair
+            iPointsCandidates = rects[i].point_candidates_in_polygon(particles, jBB);
+            jPointsCandidates = rects[j].point_candidates_in_polygon(particles, iBB);
           }
         }
+
         for (std::size_t k = 0; k < jPointsCandidates.size(); ++k) {
           std::size_t candidate = jPointsCandidates[k];
           if (rects[i].point_in_polygon(candidate, particles)) {
             collision_resolution(particles[candidate], rects[i], restitution);
+            iPointsCandidates = rects[i].point_candidates_in_polygon(particles, jBB);
+            jPointsCandidates = rects[j].point_candidates_in_polygon(particles, iBB);
           }
         }
       }
