@@ -25,7 +25,8 @@ public:
     Particle *a = nullptr, *b = nullptr;
     double tReq = 0.0;
     for (size_t i = 0, j = sz-1; i < sz; j = i++) {
-      Particle& tmp1 = particles[boundary[i]], tmp2 = particles[boundary[j]];
+      Particle& tmp1 = particles[boundary[i]];
+      Particle& tmp2 = particles[boundary[j]];
       const Vec2& pos = p.get_pos();
       const Vec2& pa = tmp1.get_pos(), pb = tmp2.get_pos();
 
@@ -85,14 +86,12 @@ public:
         for (std::size_t k = 0; k < iPointsCandidates.size(); ++k) {
           std::size_t candidate = iPointsCandidates[k];
           if (rects[j].point_in_polygon(candidate, particles)) {
-            // handle collision: PIP for j particle inside i
             collision_resolution(particles[candidate], rects[j], restitution);
           }
         }
         for (std::size_t k = 0; k < jPointsCandidates.size(); ++k) {
           std::size_t candidate = jPointsCandidates[k];
           if (rects[i].point_in_polygon(candidate, particles)) {
-            // handle collision: PIP for i particle inside j
             collision_resolution(particles[candidate], rects[i], restitution);
           }
         }
