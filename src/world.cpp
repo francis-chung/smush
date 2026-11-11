@@ -30,9 +30,6 @@ public:
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, std::size_t subdiv, double angleRad = 0.0) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv, angleRad));
   }
-  void add_rect(SoftRect& r) {
-    rects.push_back(r);
-  }
   
   void pin_particle(SoftRect& rect, std::size_t i, std::size_t j) { 
     if (i >= rect.get_nx() || j >= rect.get_ny()) { return; }

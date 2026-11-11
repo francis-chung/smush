@@ -20,12 +20,8 @@ class Solver {
 public: 
   World world;
 
-  Solver(double linearDamp, Vec2 lower_bounds, Vec2 upper_bounds, std::vector<SoftRect> rects = {}) : 
-    world(linearDamp, lower_bounds, upper_bounds) {
-    for (SoftRect& r : rects) {
-      world.add_rect(r);
-    }
-  }
+  Solver(double linearDamp, Vec2 lower_bounds, Vec2 upper_bounds) : 
+    world(linearDamp, lower_bounds, upper_bounds) {}
 
   void run() {  
     const double physicsHz = 120.0;
