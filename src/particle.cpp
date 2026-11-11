@@ -42,19 +42,24 @@ public:
     double vx = vel.get_x(), vy = vel.get_y();
     double lowerX = lower_bounds.get_x(), lowerY = lower_bounds.get_y();
     double upperX = upper_bounds.get_x(), upperY = upper_bounds.get_y();
+    
+    double newX = x, newY = y;
+    double newVx = vx, newVy = vy;
     if (x < lowerX) {
-      set_pos({ lowerX, y });
-      set_vel({ restitution * -vx, restitution * vy });
+      newX = lowerX;
+      if (vx < 0) newVx = -vx;
     } else if (x > upperX) {
-      set_pos({ upperX, y });
-      set_vel({ restitution * -vx, restitution * vy });
+      newX = upperX; 
+      if (vx > 0) newVx = -vx;
     }
     if (y < lowerY) {
-      set_pos({ x, lowerY });
-      set_vel({ restitution * vx, restitution * -vy });
+      newY = lowerY;
+      if (vy < 0) newVy = -vy;
     } else if (y > upperY) {
-      set_pos({ x, upperY });
-      set_vel({ restitution * vx, restitution * -vy });
+      newY = upperY;
+      if (vy > 0) newVy = -vy;
     }
+    set_pos({ newX, newY });
+    set_vel({ restitution * newVx, restitution * newVy });
   }
 };
