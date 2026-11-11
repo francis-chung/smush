@@ -11,9 +11,9 @@ int main() {
   const double pi = std::acos(-1.0);
   const double angle1 = 25.0 * pi / 180.0;
   const double angle2 = 55.0 * pi / 180.0;
-  solver.world.add_rect(Vec2(-10, 20), 10, 10, 1.0, 0.8, 5, angle1);
+  solver.world.add_rect(Vec2(-20, 20), 10, 10, 1.0, 0.8, 5, angle1);
   solver.world.add_rect(Vec2(5, 30), 8, 8, 1.0, 0.8, 4, angle2);
-  solver.world.apply_external_impulse(0, Vec2(-10.0, 5.0));
+  solver.world.apply_external_impulse(0, Vec2(20.0, 10.0));
 
   solver.run();
 }

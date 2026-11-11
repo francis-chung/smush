@@ -15,27 +15,54 @@ public:
   CollisionManager(std::vector<Particle>& parts, std::vector<SoftRect>& recs) : particles(parts), rects(recs) {}
 
   // moves the particle parallel to the normal of the nearest SoftRect edge
-  void collision_displace(Particle& p, SoftRect& rect) {
+  void collision_displace(Particle& p, SoftRect& rect, double restitution) {
     // ignore pinned particles
     if (!p.get_inv_mass()) return;
 
     const std::vector<std::size_t>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
     Vec2 displacement{1e9, 1e9};
+    Particle *a = nullptr, *b = nullptr;
+    double tReq = 0.0;
     for (size_t i = 0, j = sz-1; i < sz; j = i++) {
-      const Particle& tmp1 = particles[boundary[i]], tmp2 = particles[boundary[j]];
+      Particle& tmp1 = particles[boundary[i]], tmp2 = particles[boundary[j]];
       const Vec2& pos = p.get_pos();
-      const Vec2& a = tmp1.get_pos(), b = tmp2.get_pos();
+      const Vec2& pa = tmp1.get_pos(), pb = tmp2.get_pos();
 
       // calculates position along edge from a to b where closest point would be
-      Vec2 edge = b - a;
+      Vec2 edge = pb - pa;
       if (edge.normsq() < 1e-9) continue;
-      double t = dot(pos - a, edge) / edge.normsq();
+      double t = dot(pos - pa, edge) / edge.normsq();
       t = std::clamp(t, 0.0, 1.0);
-      Vec2 closest = a + t * edge;
-      displacement = std::min({displacement, closest - pos}, [](const Vec2& a, const Vec2& b) { return a.norm() < b.norm(); });
+      Vec2 closest = pa + t * edge;
+      if ((closest - pos).norm() < displacement.norm()) {
+        displacement = closest - pos;
+        a = &tmp1, b = &tmp2;
+        tReq = t;
+      }
     }
-    if (displacement.get_x() != 1e9) p.set_pos(p.get_pos() + displacement);
+    if (a != nullptr) {
+      p.set_pos(p.get_pos() + displacement);
+
+      double depth = displacement.norm();
+      if (depth < 1e-9) return;
+      Vec2 n = displacement / depth;
+
+      double weightA = 1.0 - tReq;
+      double weightB = tReq;
+      Vec2 edgeVel = weightA * a->get_vel() + weightB * b->get_vel();
+      double vn = dot(p.get_vel() - edgeVel, n);
+      if (vn >= 0.0) return;  // already separating or not approaching
+
+      double denom = p.get_inv_mass() + (weightA * weightA * a->get_inv_mass()) + (weightB * weightB * b->get_inv_mass());
+      if (denom <= 0.0) return;
+
+      double j = -(1.0 + restitution) * vn / denom;
+      Vec2 J = j * n;
+      p.set_vel(p.get_vel() + p.get_inv_mass() * J);
+      a->set_vel(a->get_vel() - weightA * a->get_inv_mass() * J);
+      b->set_vel(b->get_vel() - weightB * b->get_inv_mass() * J);
+    }
   }
   
   void update() {
@@ -44,6 +71,8 @@ public:
     for (std::size_t i = 0; i < n; ++i) {
       aabbs[i] = rects[i].get_aabb(particles);
     }
+    
+    double restitution = 0.7;
     for (std::size_t i = 0; i < n; ++i) {
       for (std::size_t j = i+1; j < n; ++j) {
         if (!rects[i].colliding_aabb(aabbs[i], aabbs[j])) continue;
@@ -53,14 +82,14 @@ public:
           std::size_t candidate = iPointsCandidates[k];
           if (rects[j].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for j particle inside i
-            collision_displace(particles[candidate], rects[j]);
+            collision_displace(particles[candidate], rects[j], restitution);
           }
         }
         for (std::size_t k = 0; k < jPointsCandidates.size(); ++k) {
           std::size_t candidate = jPointsCandidates[k];
           if (rects[i].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for i particle inside j
-            collision_displace(particles[candidate], rects[i]);
+            collision_displace(particles[candidate], rects[i], restitution);
           }
         }
       }
