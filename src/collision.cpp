@@ -4,6 +4,7 @@
 #include "softrect.cpp"
 
 #include <vector>
+#include <algorithm>
 
 class CollisionManager {
 private: 
@@ -17,21 +18,19 @@ public:
   void collision_displace(Particle& p, SoftRect& rect) {
     const std::vector<int>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
-    double minDist = __DBL_MAX__;
-    Vec2 *minNormal = nullptr;
+    Vec2 displacement{1e9, 1e9};
     for (size_t i = 0, j = sz-1; i < sz; j = i++) {
       const Particle& tmp1 = particles[boundary[i]], tmp2 = particles[boundary[j]];
-      const Vec2& pos1 = tmp1.get_pos();
-      const Vec2& pos2 = tmp2.get_pos();
-      Vec2 normal = (pos1.get_y() - pos2.get_y(), pos2.get_x() - pos1.get_x());
-      Vec2 pointProj = proj(normal, pos1 - p.get_pos());
-      double dist = pointProj.norm();
-      if (dist < minDist) {
-        minDist = dist;
-        minNormal = &normal;
-      }
+      const Vec2& pos = p.get_pos();
+      const Vec2& a = tmp1.get_pos(), b = tmp2.get_pos();
+
+      // calculates position along edge from a to b where closest point would be
+      Vec2 edge = b - a;
+      double t = dot(pos - a, edge) / edge.normsq();
+      t = std::clamp(t, 0.0, 1.0);
+      Vec2 closest = a + t * edge;
+      displacement = std::min({displacement, closest - pos}, [](const Vec2& a, const Vec2& b) { return a.norm() < b.norm(); });
     }
-    Vec2 displacement = minDist * *minNormal;
     p.set_pos(p.get_pos() + displacement);
   }
   
