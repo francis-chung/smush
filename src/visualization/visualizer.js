@@ -80,31 +80,44 @@ function render(state) {
       for (let j = 0; j < ny; j++) {
         const idx = startIdx + i * ny + j;
         const p = state.particles[idx];
+        if (p.x === "null" || p.y === "null") {
+          continue;
+        }
 
         // structural springs
         if (j + 1 < ny) {
           const next = state.particles[idx + 1];
-          drawSpring(p, next);
+          if (next.x !== "null" && next.y !== "null") {
+            drawSpring(p, next);
+          }
         }
         if (i + 1 < nx) {
           const next = state.particles[idx + ny];
-          drawSpring(p, next);
+          if (next.x !== "null" && next.y !== "null") {
+            drawSpring(p, next);
+          }
         }
         // shear springs
         if (i + 1 < nx && j + 1 < ny) {
           const next = state.particles[idx + ny + 1];
-          drawSpring(p, next);
+          if (next.x !== "null" && next.y !== "null") {
+            drawSpring(p, next);
+          }
         }
         if (i + 1 < nx && j > 0) {
           const next = state.particles[idx + ny - 1];
-          drawSpring(p, next);
+          if (next.x !== "null" && next.y !== "null") {
+            drawSpring(p, next);
+          }
         }
       }
     }
   });
 
   // draw particles on top
-  state.particles.forEach((p) => drawParticle(p.x, p.y));
+  state.particles.forEach((p) =>
+    p.x !== "null" && p.y !== "null" ? drawParticle(p.x, p.y) : null,
+  );
 }
 
 let lastFrameTime = Date.now();

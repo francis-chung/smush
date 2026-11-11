@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <string>
 
 std::string world_to_json(const World& world) {
   std::ostringstream json;
@@ -13,13 +14,15 @@ std::string world_to_json(const World& world) {
   bool firstAdded = false;
   for (std::size_t i = 0; i < particles.size(); ++i) {
     const Vec2& pos = particles[i].get_pos();
-    if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
+    double x = pos.get_x(), y = pos.get_y();
+    if (!std::isfinite(x) || !std::isfinite(y)) {
       nanCount++;
       if (firstNanIdx == std::numeric_limits<std::size_t>::max()) firstNanIdx = i;
-      continue;
     }
+    std::string sx = (std::isfinite(x) ? std::to_string(x) : "null");
+    std::string sy = (std::isfinite(y) ? std::to_string(y) : "null");
     if (firstAdded) json << ",";
-    json << "{\"x\":" << pos.get_x() << ",\"y\":" << pos.get_y() << "}";
+    json << "{\"x\":" << sx << ",\"y\":" << sy << "}";
     firstAdded = true;
   }
 
