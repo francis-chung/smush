@@ -34,6 +34,9 @@ function worldToScreen(x, y) {
 }
 
 function drawParticle(x, y) {
+  if (x === "null" || y === "null") {
+    return;
+  }
   const screen = worldToScreen(x, y);
   ctx.beginPath();
   ctx.arc(screen.x, screen.y, 3, 0, Math.PI * 2);
@@ -42,6 +45,14 @@ function drawParticle(x, y) {
 }
 
 function drawSpring(p1, p2) {
+  if (
+    p1.x === "null" ||
+    p1.y === "null" ||
+    p2.x === "null" ||
+    p2.y === "null"
+  ) {
+    return;
+  }
   const s1 = worldToScreen(p1.x, p1.y);
   const s2 = worldToScreen(p2.x, p2.y);
   ctx.beginPath();
@@ -80,44 +91,31 @@ function render(state) {
       for (let j = 0; j < ny; j++) {
         const idx = startIdx + i * ny + j;
         const p = state.particles[idx];
-        if (p.x === "null" || p.y === "null") {
-          continue;
-        }
 
         // structural springs
         if (j + 1 < ny) {
           const next = state.particles[idx + 1];
-          if (next.x !== "null" && next.y !== "null") {
-            drawSpring(p, next);
-          }
+          drawSpring(p, next);
         }
         if (i + 1 < nx) {
           const next = state.particles[idx + ny];
-          if (next.x !== "null" && next.y !== "null") {
-            drawSpring(p, next);
-          }
+          drawSpring(p, next);
         }
         // shear springs
         if (i + 1 < nx && j + 1 < ny) {
           const next = state.particles[idx + ny + 1];
-          if (next.x !== "null" && next.y !== "null") {
-            drawSpring(p, next);
-          }
+          drawSpring(p, next);
         }
         if (i + 1 < nx && j > 0) {
           const next = state.particles[idx + ny - 1];
-          if (next.x !== "null" && next.y !== "null") {
-            drawSpring(p, next);
-          }
+          drawSpring(p, next);
         }
       }
     }
   });
 
   // draw particles on top
-  state.particles.forEach((p) =>
-    p.x !== "null" && p.y !== "null" ? drawParticle(p.x, p.y) : null,
-  );
+  state.particles.forEach((p) => drawParticle(p.x, p.y));
 }
 
 let lastFrameTime = Date.now();
