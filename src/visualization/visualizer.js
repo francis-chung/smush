@@ -114,7 +114,7 @@ async function pollState() {
   try {
     const response = await fetch("physics_state.json?t=" + Date.now(), {
       cache: "no-store",
-      header: {
+      headers: {
         "Cache-Control": "no-cache",
       },
     });

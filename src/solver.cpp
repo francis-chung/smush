@@ -7,6 +7,11 @@
 #include <thread>
 #include <fstream>
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
 using Duration = std::chrono::duration<double>;
@@ -46,12 +51,16 @@ public:
         
         // write state to file every 2 frames
         if (frameCount++ % 2 == 0) {
-          std::ofstream out("visualization/physics_state.json");
-          if (out.is_open()) {
-            out << world_to_json(world);
-            out.close();
-          } else {
-            std::cerr << "failed to open file" << std::endl;
+          const char *temp = "visualization/physics_state_tmp.json";
+          std::ofstream out(temp);
+          out << world_to_json(world);
+          out.close(); 
+
+          if (!out) {
+            std::cerr << "failed to write snapshot\n";
+          } else if (!MoveFileExA(temp, "visualization/physics_state.json", MOVEFILE_REPLACE_EXISTING)) {
+            const auto error = GetLastError();
+            std::cerr << "failed to publish snapshot: " << error << '\n';
           }
         }
       }

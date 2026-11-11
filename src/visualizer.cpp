@@ -10,14 +10,17 @@ std::string world_to_json(const World& world) {
   const auto& particles = world.get_particles();
   std::size_t nanCount = 0;
   std::size_t firstNanIdx = std::numeric_limits<std::size_t>::max();
+  bool firstAdded = false;
   for (std::size_t i = 0; i < particles.size(); ++i) {
     const Vec2& pos = particles[i].get_pos();
     if (std::isnan(pos.get_x()) || std::isnan(pos.get_y())) {
       nanCount++;
       if (firstNanIdx == std::numeric_limits<std::size_t>::max()) firstNanIdx = i;
+      continue;
     }
+    if (firstAdded) json << ",";
     json << "{\"x\":" << pos.get_x() << ",\"y\":" << pos.get_y() << "}";
-    if (i < particles.size() - 1) json << ",";
+    firstAdded = true;
   }
 
   json << "],\"rects\":[";
