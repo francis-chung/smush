@@ -35,7 +35,7 @@ public:
       Vec2 closest = a + t * edge;
       displacement = std::min({displacement, closest - pos}, [](const Vec2& a, const Vec2& b) { return a.norm() < b.norm(); });
     }
-    p.set_pos(p.get_pos() + displacement);
+    if (displacement.get_x() != 1e9) p.set_pos(p.get_pos() + displacement);
   }
   
   void update() {
