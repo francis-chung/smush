@@ -26,12 +26,12 @@ public:
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, int subdiv, double angleRad = 0.0) {
     rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv, angleRad));
   }
-  void add_rect(SoftRect r) {
+  void add_rect(SoftRect& r) {
     rects.push_back(r);
   }
   
   void pin_particle(SoftRect& rect, std::size_t i, std::size_t j) { 
-    if (i < 0 || i >= rect.get_nx() || j < 0 || j >= rect.get_ny()) { return; }
+    if (i >= rect.get_nx() || j >= rect.get_ny()) { return; }
     particles[rect.get_particle(i, j)].pin(); 
   }
   void set_rect_force(std::size_t rectIndex, const Vec2& force) {
