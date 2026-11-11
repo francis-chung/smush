@@ -35,10 +35,16 @@ private:
 
 public:
   SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) :
-    w(wd), h(hi), mass(ms), restitution(rest), nx(subd + 1), ny(subd + 1), partStartIdx(particles.size())
+    nx(subd + 1), ny(subd + 1), partStartIdx(particles.size())
   {
-    double pm = mass / (nx * ny);
+    assert(wd > 0);
+    assert(hi > 0);
+    assert(ms > 0);
+    assert(rest >= 0 && rest <= 1);
+    
+    w = wd, h = hi, mass = ms, restitution = rest;
 
+    double pm = mass / (nx * ny);
     const Vec2 center = p + Vec2(wd * 0.5, hi * 0.5);
     const double c = std::cos(angleRad);
     const double s = std::sin(angleRad);
@@ -71,7 +77,7 @@ public:
     double benStiff = 20.0, benDamp = 0.6;
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
-        int p1 = grid[i][j];
+        std::size_t p1 = grid[i][j];
         if (j+1 < ny)              add_spring(particles, p1, grid[i][j+1], strStiff, strDamp); 
         if (i+1 < nx)              add_spring(particles, p1, grid[i+1][j], strStiff, strDamp); 
         if (i+1 < nx && j+1 < ny)  add_spring(particles, p1, grid[i+1][j+1], sheStiff, sheDamp); 
