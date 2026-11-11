@@ -14,11 +14,11 @@ private:
 public: 
   CollisionManager(std::vector<Particle>& parts, std::vector<SoftRect>& recs) : particles(parts), rects(recs) {}
 
-  // moves the particle parallel to the normal of the nearest SoftRect edge
-  void collision_displace(Particle& p, SoftRect& rect, double restitution) {
+  void collision_resolution(Particle& p, SoftRect& rect, double restitution) {
     // ignore pinned particles
     if (!p.get_inv_mass()) return;
 
+    // find the nearest edge of the polygon to the point and prep displacement
     const std::vector<std::size_t>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
     Vec2 displacement{1e9, 1e9};
@@ -42,10 +42,13 @@ public:
       }
     }
     if (a != nullptr) {
+      // apply displacement to displace the point outside the polygon
       p.set_pos(p.get_pos() + displacement);
 
+      // calculate impulses after collision for point and vertices of polygon edge
       double depth = displacement.norm();
       if (depth < 1e-9) return;
+      // unit normal from point to polygon edge
       Vec2 n = displacement / depth;
 
       double weightA = 1.0 - tReq;
@@ -57,6 +60,7 @@ public:
       double denom = p.get_inv_mass() + (weightA * weightA * a->get_inv_mass()) + (weightB * weightB * b->get_inv_mass());
       if (denom <= 0.0) return;
 
+      // magnitude of impulse on either side of the collision
       double j = -(1.0 + restitution) * vn / denom;
       Vec2 J = j * n;
       p.set_vel(p.get_vel() + p.get_inv_mass() * J);
@@ -82,14 +86,14 @@ public:
           std::size_t candidate = iPointsCandidates[k];
           if (rects[j].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for j particle inside i
-            collision_displace(particles[candidate], rects[j], restitution);
+            collision_resolution(particles[candidate], rects[j], restitution);
           }
         }
         for (std::size_t k = 0; k < jPointsCandidates.size(); ++k) {
           std::size_t candidate = jPointsCandidates[k];
           if (rects[i].point_in_polygon(candidate, particles)) {
             // handle collision: PIP for i particle inside j
-            collision_displace(particles[candidate], rects[i], restitution);
+            collision_resolution(particles[candidate], rects[i], restitution);
           }
         }
       }
