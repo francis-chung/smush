@@ -19,6 +19,10 @@ private:
 public:
   World(double ld, Vec2 lower_bounds = Vec2(-1e9, -1e9), Vec2 upper_bounds = Vec2(1e9, 1e9)) : 
     particles(), rects(), colls(particles, rects), linearDamping(ld), lower_bounds(lower_bounds), upper_bounds(upper_bounds) {}
+  World(const World&) = delete;
+  World& operator=(const World&) = delete;
+  World(World&&) = delete;
+  World& operator=(World&&) = delete;
 
   const std::vector<Particle>& get_particles() const { return particles; }
   const std::vector<SoftRect>& get_rects() const { return rects; }
