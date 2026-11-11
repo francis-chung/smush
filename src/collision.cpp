@@ -26,6 +26,7 @@ public:
 
       // calculates position along edge from a to b where closest point would be
       Vec2 edge = b - a;
+      if (edge.normsq() < 1e-9) continue;
       double t = dot(pos - a, edge) / edge.normsq();
       t = std::clamp(t, 0.0, 1.0);
       Vec2 closest = a + t * edge;
