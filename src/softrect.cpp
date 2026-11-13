@@ -3,18 +3,7 @@
 #include "mathlib.cpp"
 #include "particle.cpp"
 #include "spring.cpp"
-
-class AABB {
-private: 
-  Vec2 min, max;
-
-public: 
-  AABB() : min(), max() {}
-  AABB(Vec2 min, Vec2 max) : min(min), max(max) {}
-
-  const Vec2& get_min() const { return min; }
-  const Vec2& get_max() const { return max; }
-};
+#include "aabb.cpp"
 
 class SoftRect {
 private: 
@@ -139,14 +128,6 @@ public:
     Vec2 max_pos(maxX, maxY);
     AABB aabb(min_pos, max_pos);
     return aabb;
-  }
-
-  bool colliding_aabb(const AABB& currentBox, const AABB& otherBox, double tolerance = 1e-5) {
-    Vec2 cMin = currentBox.get_min(), cMax = currentBox.get_max();
-    Vec2 oMin = otherBox.get_min(), oMax = otherBox.get_max();
-    bool intersectX = (std::min(cMax.get_x(), oMax.get_x()) > std::max(cMin.get_x(), oMin.get_x()) - tolerance);
-    bool intersectY = (std::min(cMax.get_y(), oMax.get_y()) > std::max(cMin.get_y(), oMin.get_y()) - tolerance);
-    return intersectX && intersectY;
   }
 
   std::vector<std::size_t> point_candidates_in_polygon(const std::vector<Particle>& particles, const AABB& otherBox) {

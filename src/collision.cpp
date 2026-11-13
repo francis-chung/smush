@@ -76,7 +76,7 @@ public:
         // bounding boxes can change after particle collisions are applied
         AABB iBB = rects[i].get_aabb(particles);
         AABB jBB = rects[j].get_aabb(particles);
-        if (!rects[i].colliding_aabb(iBB, jBB)) continue;
+        if (!iBB.colliding_aabb(jBB)) continue;
 
         std::vector<std::size_t> iPointsCandidates = rects[i].point_candidates_in_polygon(particles, jBB);
         std::vector<std::size_t> jPointsCandidates = rects[j].point_candidates_in_polygon(particles, iBB);
