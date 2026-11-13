@@ -14,6 +14,9 @@ public:
   Spring(std::size_t i, std::size_t j, double len, double st, double dc) : 
     i(i), j(j), restLength(len), stiffness(st), dampCoeff(dc) {}
 
+  std::size_t get_i() const { return i; }
+  std::size_t get_j() const { return j; }  
+  
   void apply_spring_force(std::vector<Particle>& particles) {
     Particle& p1 = particles[i];
     Particle& p2 = particles[j];

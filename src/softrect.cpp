@@ -94,6 +94,7 @@ public:
   std::size_t get_ny() const { return ny; }
   std::size_t get_start_idx() const { return partStartIdx; }
   const std::vector<std::size_t>& get_boundary() const { return boundary; }
+  const std::vector<Spring>& get_springs() const { return springs; }
 
   void set_external_force(const Vec2& f) { externalForce = f; }
   void apply_external_force(std::vector<Particle>& particles) {
