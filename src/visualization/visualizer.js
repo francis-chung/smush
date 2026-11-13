@@ -33,14 +33,14 @@ function worldToScreen(x, y) {
   };
 }
 
-function drawParticle(x, y) {
+function drawParticle(x, y, boundary = false) {
   if (!Number.isFinite(x) || !Number.isFinite(y)) {
     return;
   }
   const screen = worldToScreen(x, y);
   ctx.beginPath();
   ctx.arc(screen.x, screen.y, 3, 0, Math.PI * 2);
-  ctx.fillStyle = "#4CAF50";
+  ctx.fillStyle = boundary ? "#E53935" : "#4CAF50";
   ctx.fill();
 }
 
@@ -81,12 +81,21 @@ function render(state) {
   ctx.lineWidth = 2;
   ctx.strokeRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
 
+  const boundaryPoints = new Set();
   state.bodies.forEach((body) => {
     body.springs.forEach(([a, b]) =>
       drawSpring(state.particles[a], state.particles[b]),
     );
+    body.boundary.forEach((p) => {
+      boundaryPoints.add(p);
+      drawParticle(state.particles[p].x, state.particles[p].y, true);
+    });
   });
-  state.particles.forEach((p) => drawParticle(p.x, p.y));
+  state.particles.forEach((p, i) => {
+    if (!boundaryPoints.has(i)) {
+      drawParticle(p.x, p.y);
+    }
+  });
 }
 
 let lastFrameTime = Date.now();
