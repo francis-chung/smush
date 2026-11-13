@@ -45,16 +45,6 @@ std::string world_to_json(const World& world) {
     }
     json << "]}";
   }
-  json << "],";
-
-  json << "\"rects\":[";
-  // const auto& rects = world.get_rects();
-  for (std::size_t i = 0; i < rects.size(); ++i) {
-    json << "{\"nx\":" << rects[i].get_nx()
-         << ",\"ny\":" << rects[i].get_ny()
-         << ",\"start_idx\":" << rects[i].get_start_idx() << "}";
-    if (i < rects.size() - 1) json << ",";
-  }
   json << "]}";
   
   return json.str();
