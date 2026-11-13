@@ -63,9 +63,11 @@ public:
     }
     for (Particle& p : particles) {
       p.integrate(dt, linearDamping);
-      p.boundary_collision(lower_bounds, upper_bounds);
     }
     colls.update();
+    for (Particle& p : particles) {
+      p.boundary_collision(lower_bounds, upper_bounds);
+    }
   }
 
   void debug_particles() {
