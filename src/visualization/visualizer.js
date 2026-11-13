@@ -81,40 +81,11 @@ function render(state) {
   ctx.lineWidth = 2;
   ctx.strokeRect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
 
-  // draw springs for each softbody
-  state.rects.forEach((rect) => {
-    const startIdx = rect.start_idx;
-    const nx = rect.nx;
-    const ny = rect.ny;
-
-    for (let i = 0; i < nx; i++) {
-      for (let j = 0; j < ny; j++) {
-        const idx = startIdx + i * ny + j;
-        const p = state.particles[idx];
-
-        // structural springs
-        if (j + 1 < ny) {
-          const next = state.particles[idx + 1];
-          drawSpring(p, next);
-        }
-        if (i + 1 < nx) {
-          const next = state.particles[idx + ny];
-          drawSpring(p, next);
-        }
-        // shear springs
-        if (i + 1 < nx && j + 1 < ny) {
-          const next = state.particles[idx + ny + 1];
-          drawSpring(p, next);
-        }
-        if (i + 1 < nx && j > 0) {
-          const next = state.particles[idx + ny - 1];
-          drawSpring(p, next);
-        }
-      }
-    }
+  state.bodies.forEach((body) => {
+    body.springs.forEach(([a, b]) =>
+      drawSpring(state.particles[a], state.particles[b]),
+    );
   });
-
-  // draw particles on top
   state.particles.forEach((p) => drawParticle(p.x, p.y));
 }
 
