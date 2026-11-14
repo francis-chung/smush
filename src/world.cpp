@@ -29,14 +29,14 @@ public:
   const std::vector<std::unique_ptr<SoftBody>>& get_bodies() const { return bodies; }
 
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, std::size_t subdiv, double angleRad = 0.0) {
-    bodies.push_back(std::make_unique<SoftBody>(particles, origin, w, h, mass, restitution, subdiv, angleRad));
+    bodies.push_back(std::make_unique<SoftRect>(particles, origin, w, h, mass, restitution, subdiv, angleRad));
   }
   
-  void pin_particle(SoftBody& rect, std::size_t index) { 
-    particles[rect.get_particle(index)].pin(); 
+  void pin_particle(SoftBody& body, std::size_t index) { 
+    particles[body.get_particle(index)].pin(); 
   }
   
-  void set_rect_force(std::size_t bodyIndex, const Vec2& force) {
+  void set_body_force(std::size_t bodyIndex, const Vec2& force) {
     bodies.at(bodyIndex)->set_external_force(force);
   }
 
