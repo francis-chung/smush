@@ -73,11 +73,11 @@ public:
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
 
-  void update_springs(std::vector<Particle>& particles) {
+  void update_springs(std::vector<Particle>& particles) override {
     for (Spring& s : springs) { s.apply_spring_force(particles); }
   }
 
-  void apply_external_force(std::vector<Particle>& particles) {
+  void apply_external_force(std::vector<Particle>& particles) override {
     const Vec2 particleForce = externalForce / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
@@ -86,7 +86,7 @@ public:
     }
   }
 
-  void apply_external_impulse(std::vector<Particle>& particles, const Vec2& impulse) {
+  void apply_external_impulse(std::vector<Particle>& particles, const Vec2& impulse) override {
     const Vec2 particleImpulse = impulse / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
@@ -98,9 +98,7 @@ public:
     }
   }
 
-
-
-  bool point_in_polygon(std::size_t pIndex, const std::vector<Particle>& particles) {
+  bool point_in_polygon(std::size_t pIndex, const std::vector<Particle>& particles) override {
     double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
     bool inside = false;
     std::size_t sz = boundary.size();
@@ -114,7 +112,7 @@ public:
     return inside;
   }
 
-  AABB get_aabb(const std::vector<Particle>& particles) {
+  AABB get_aabb(const std::vector<Particle>& particles) override {
     double minX = particles[grid[0][0]].get_pos().get_x(), maxX = particles[grid[0][0]].get_pos().get_x();
     double minY = particles[grid[0][0]].get_pos().get_y(), maxY = particles[grid[0][0]].get_pos().get_y();
     for (std::size_t i = 0; i < nx; ++i) {
@@ -131,7 +129,7 @@ public:
     return aabb;
   }
 
-  std::vector<std::size_t> point_candidates_in_body(const std::vector<Particle>& particles, const AABB& otherBox) {
+  std::vector<std::size_t> point_candidates_in_body(const std::vector<Particle>& particles, const AABB& otherBox) override {
     std::vector<std::size_t> points;
     double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
     double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
