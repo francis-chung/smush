@@ -10,7 +10,6 @@ private:
   double w, h;
   double mass, restitution;
   std::size_t nx, ny;                             // number of particles aligned to axes
-  std::size_t partStartIdx;                       // first index of particles part of SoftRect 
   std::vector<std::vector<std::size_t>> grid;
   std::vector<std::size_t> boundary;
   std::vector<Spring> springs;
@@ -23,9 +22,7 @@ private:
   }
 
 public:
-  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) :
-    partStartIdx(particles.size())
-  {
+  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) {
     assert(wd > 0);
     assert(hi > 0);
     assert(ms > 0);
@@ -81,7 +78,6 @@ public:
   std::size_t get_particle(std::size_t i, std::size_t j) const { return grid[i][j]; }
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
-  std::size_t get_start_idx() const { return partStartIdx; }
   const std::vector<std::size_t>& get_boundary() const { return boundary; }
   const std::vector<Spring>& get_springs() const { return springs; }
 
