@@ -6,11 +6,12 @@
 #include "collision.cpp"
 
 #include <iostream>
+#include <memory>
 
 class World {
 private:
   std::vector<Particle> particles;
-  std::vector<SoftRect> rects;
+  std::vector<std::unique_ptr<SoftRect>> rects;
   CollisionManager colls;
   double linearDamping;
   Vec2 lower_bounds, upper_bounds;
@@ -25,10 +26,10 @@ public:
   World& operator=(World&&) = delete;
 
   const std::vector<Particle>& get_particles() const { return particles; }
-  const std::vector<SoftRect>& get_rects() const { return rects; }
+  const std::vector<std::unique_ptr<SoftRect>>& get_rects() const { return rects; }
 
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, std::size_t subdiv, double angleRad = 0.0) {
-    rects.push_back(SoftRect(particles, origin, w, h, mass, restitution, subdiv, angleRad));
+    rects.push_back(std::make_unique<SoftRect>(particles, origin, w, h, mass, restitution, subdiv, angleRad));
   }
   
   void pin_particle(SoftRect& rect, std::size_t i, std::size_t j) { 
@@ -36,10 +37,10 @@ public:
     particles[rect.get_particle(i, j)].pin(); 
   }
   void set_rect_force(std::size_t rectIndex, const Vec2& force) {
-    rects.at(rectIndex).set_external_force(force);
+    rects.at(rectIndex)->set_external_force(force);
   }
   void apply_external_impulse(std::size_t rectIndex, const Vec2& impulse) {
-    const SoftRect& r = rects.at(rectIndex);
+    const SoftRect& r = *rects.at(rectIndex);
     std::size_t nx = r.get_nx(), ny = r.get_ny();
     const Vec2 particleImpulse = impulse / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
@@ -57,9 +58,9 @@ public:
       p.set_force_acc(Vec2(0, 0));
       p.add_force(g * p.get_mass());
     }
-    for (SoftRect& r : rects) {
-      r.apply_external_force(particles);
-      r.update_springs(particles);
+    for (auto& r : rects) {
+      r->apply_external_force(particles);
+      r->update_springs(particles);
     }
     for (Particle& p : particles) {
       p.integrate(dt, linearDamping);
