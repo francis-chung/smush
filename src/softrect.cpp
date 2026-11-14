@@ -73,6 +73,10 @@ public:
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
 
+  void update_springs(std::vector<Particle>& particles) {
+    for (Spring& s : springs) { s.apply_spring_force(particles); }
+  }
+
   void apply_external_force(std::vector<Particle>& particles) {
     const Vec2 particleForce = externalForce / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
@@ -82,9 +86,19 @@ public:
     }
   }
 
-  void update_springs(std::vector<Particle>& particles) {
-    for (Spring& s : springs) { s.apply_spring_force(particles); }
+  void apply_external_impulse(std::vector<Particle>& particles, const Vec2& impulse) {
+    const Vec2 particleImpulse = impulse / (nx * ny);
+    for (std::size_t i = 0; i < nx; ++i) {
+      for (std::size_t j = 0; j < ny; ++j) {
+        Particle& p = particles[grid[i][j]];
+        const Vec2& v = p.get_vel();
+        const double invM = p.get_inv_mass();
+        particles[grid[i][j]].set_vel(v + particleImpulse * invM);
+      }
+    }
   }
+
+
 
   bool point_in_polygon(std::size_t pIndex, const std::vector<Particle>& particles) {
     double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
@@ -117,7 +131,7 @@ public:
     return aabb;
   }
 
-  std::vector<std::size_t> point_candidates_in_polygon(const std::vector<Particle>& particles, const AABB& otherBox) {
+  std::vector<std::size_t> point_candidates_in_body(const std::vector<Particle>& particles, const AABB& otherBox) {
     std::vector<std::size_t> points;
     double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
     double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();

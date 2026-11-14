@@ -10,12 +10,12 @@
 class CollisionManager {
 private: 
   std::vector<Particle>& particles;
-  std::vector<std::unique_ptr<SoftRect>>& rects;
+  std::vector<std::unique_ptr<SoftBody>>& rects;
 
 public: 
-  CollisionManager(std::vector<Particle>& parts, std::vector<std::unique_ptr<SoftRect>>& recs) : particles(parts), rects(recs) {}
+  CollisionManager(std::vector<Particle>& parts, std::vector<std::unique_ptr<SoftBody>>& recs) : particles(parts), rects(recs) {}
 
-  void collision_resolution(Particle& p, SoftRect& rect, double restitution) {
+  void collision_resolution(Particle& p, SoftBody& rect, double restitution) {
     // find the nearest edge of the polygon to the point and prep displacement
     const std::vector<std::size_t>& boundary = rect.get_boundary();
     std::size_t sz = boundary.size();
@@ -79,15 +79,15 @@ public:
         AABB jBB = rects[j]->get_aabb(particles);
         if (!iBB.colliding_aabb(jBB)) continue;
 
-        std::vector<std::size_t> iPointsCandidates = rects[i]->point_candidates_in_polygon(particles, jBB);
-        std::vector<std::size_t> jPointsCandidates = rects[j]->point_candidates_in_polygon(particles, iBB);
+        std::vector<std::size_t> iPointsCandidates = rects[i]->point_candidates_in_body(particles, jBB);
+        std::vector<std::size_t> jPointsCandidates = rects[j]->point_candidates_in_body(particles, iBB);
         for (std::size_t k = 0; k < iPointsCandidates.size(); ++k) {
           std::size_t candidate = iPointsCandidates[k];
           if (rects[j]->point_in_polygon(candidate, particles)) {
             collision_resolution(particles[candidate], *rects[j], restitution);
             // regenerate candidates after collision resolution for one pair
-            iPointsCandidates = rects[i]->point_candidates_in_polygon(particles, jBB);
-            jPointsCandidates = rects[j]->point_candidates_in_polygon(particles, iBB);
+            iPointsCandidates = rects[i]->point_candidates_in_body(particles, jBB);
+            jPointsCandidates = rects[j]->point_candidates_in_body(particles, iBB);
           }
         }
 
@@ -95,8 +95,8 @@ public:
           std::size_t candidate = jPointsCandidates[k];
           if (rects[i]->point_in_polygon(candidate, particles)) {
             collision_resolution(particles[candidate], *rects[i], restitution);
-            iPointsCandidates = rects[i]->point_candidates_in_polygon(particles, jBB);
-            jPointsCandidates = rects[j]->point_candidates_in_polygon(particles, iBB);
+            iPointsCandidates = rects[i]->point_candidates_in_body(particles, jBB);
+            jPointsCandidates = rects[j]->point_candidates_in_body(particles, iBB);
           }
         }
       }
