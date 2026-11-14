@@ -1,19 +1,13 @@
 #pragma once
 
-#include "mathlib.cpp"
+#include "softbody.cpp"
 #include "particle.cpp"
-#include "spring.cpp"
-#include "aabb.cpp"
 
-class SoftRect {
+class SoftRect : public SoftBody {
 private: 
   double w, h;
-  double mass, restitution;
   std::size_t nx, ny;                             // number of particles aligned to axes
   std::vector<std::vector<std::size_t>> grid;
-  std::vector<std::size_t> boundary;
-  std::vector<Spring> springs;
-  Vec2 externalForce{0.0, 0.0};
 
   void add_spring(std::vector<Particle>& particles, std::size_t i, std::size_t j, double stiff, double damp) {
     Vec2 d = particles[j].get_pos() - particles[i].get_pos();
@@ -78,10 +72,7 @@ public:
   std::size_t get_particle(std::size_t i, std::size_t j) const { return grid[i][j]; }
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
-  const std::vector<std::size_t>& get_boundary() const { return boundary; }
-  const std::vector<Spring>& get_springs() const { return springs; }
 
-  void set_external_force(const Vec2& f) { externalForce = f; }
   void apply_external_force(std::vector<Particle>& particles) {
     const Vec2 particleForce = externalForce / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
