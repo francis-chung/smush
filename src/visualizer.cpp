@@ -28,17 +28,17 @@ std::string world_to_json(const World& world) {
   json << "],";
 
   json << "\"bodies\":[";
-  const auto& rects = world.get_rects();
-  for (std::size_t i = 0; i < rects.size(); ++i) {
+  const auto& bodies = world.get_bodies();
+  for (std::size_t i = 0; i < bodies.size(); ++i) {
     if (i) json << ",";
     json << "{\"springs\":[";
-    const auto& springs = rects[i]->get_springs();
+    const auto& springs = bodies[i]->get_springs();
     for (std::size_t j = 0; j < springs.size(); ++j) {
       if (j) json << ",";
       json << "[" << springs[j].get_i() << "," << springs[j].get_j() << "]";
     }
     json << "],\"boundary\":[";
-    const auto& boundary = rects[i]->get_boundary();
+    const auto& boundary = bodies[i]->get_boundary();
     for (std::size_t j = 0; j < boundary.size(); ++j) {
       if (j) json << ",";
       json << boundary[j];
