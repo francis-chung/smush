@@ -10,6 +10,12 @@ private:
   double radius;
   std::size_t n;     // number of particles on circumference
 
+  void add_spring(std::vector<Particle>& particles, std::size_t p1, std::size_t p2, double stiff, double damp) {
+    Vec2 d = particles[p2].get_pos() - particles[p1].get_pos();
+    double len = d.norm();
+    springs.push_back(Spring(p1, p2, len, stiff, damp));
+  }
+
 public: 
   SoftCirc(std::vector<Particle>& particles, Vec2 c, double rad, std::size_t num, double ms, double rest) {
     assert(rad > 0);
@@ -32,7 +38,18 @@ public:
       Vec2 pos = c + Vec2(localX, localY);
       Particle p = Particle(pos, vel, mass, restitution);
       particleIndices.push_back(particles.size());
+      boundary.push_back(particles.size());
       particles.push_back(p);
+    }
+
+    double rimStiff = 25.0, rimDamp = 0.5;
+    double skpStiff = 20.0, skpDamp = 0.5;
+    double ctrStiff = 45.0, ctrDamp = 0.6;
+    for (std::size_t i = 0; i < n; ++i) {
+      std::size_t idx = boundary[i];
+      add_spring(particles, idx, boundary[(i+1)%n], rimStiff, rimDamp);
+      add_spring(particles, idx, boundary[(i+2)%n], skpStiff, skpDamp);
+      add_spring(particles, idx, particleIndices.front(), ctrStiff, ctrDamp);
     }
   }
 };
