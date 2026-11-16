@@ -12,6 +12,12 @@ protected:
   std::vector<Spring> springs;
   Vec2 externalForce;
 
+  void add_spring(std::vector<Particle>& particles, std::size_t i, std::size_t j, double stiff, double damp) {
+    Vec2 d = particles[j].get_pos() - particles[i].get_pos();
+    double len = d.norm();
+    springs.push_back(Spring(i, j, len, stiff, damp));
+  }
+
   void pin_index(std::vector<Particle>& particles, std::size_t idx) { particles[idx].pin(); }
 
 public: 

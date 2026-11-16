@@ -8,12 +8,6 @@ private:
   double w, h;
   std::size_t nx, ny;                             // number of particles aligned to axes
 
-  void add_spring(std::vector<Particle>& particles, std::size_t i, std::size_t j, double stiff, double damp) {
-    Vec2 d = particles[j].get_pos() - particles[i].get_pos();
-    double len = d.norm();
-    springs.push_back(Spring(i, j, len, stiff, damp));
-  }
-
 public:
   SoftRect(std::vector<Particle>& particles, const Vec2 bl, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) {
     assert(wd > 0);

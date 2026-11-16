@@ -10,12 +10,6 @@ private:
   double radius;
   std::size_t n;     // number of particles on circumference
 
-  void add_spring(std::vector<Particle>& particles, std::size_t p1, std::size_t p2, double stiff, double damp) {
-    Vec2 d = particles[p2].get_pos() - particles[p1].get_pos();
-    double len = d.norm();
-    springs.push_back(Spring(p1, p2, len, stiff, damp));
-  }
-
 public: 
   SoftCirc(std::vector<Particle>& particles, Vec2 c, double rad, std::size_t num, double ms, double rest) {
     assert(rad > 0);
