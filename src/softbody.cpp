@@ -4,6 +4,8 @@
 #include "spring.cpp"
 #include "aabb.cpp"
 
+#include <cfloat>
+
 class SoftBody {
 protected: 
   double mass, restitution;
@@ -46,7 +48,43 @@ public:
     }
   }
 
-  virtual bool point_in_polygon(std::size_t, const std::vector<Particle>&) = 0;
-  virtual AABB get_aabb(const std::vector<Particle>&) = 0;
-  virtual std::vector<std::size_t> point_candidates_in_body(const std::vector<Particle>&, const AABB&) = 0;
+  bool point_in_polygon(std::size_t pIndex, const std::vector<Particle>& particles) {
+    double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
+    bool inside = false;
+    std::size_t sz = boundary.size();
+    for (std::size_t i = 0, j = sz-1; i < sz; j = i++) {
+      double v1x = particles[boundary[i]].get_pos().get_x(), v1y = particles[boundary[i]].get_pos().get_y();
+      double v2x = particles[boundary[j]].get_pos().get_x(), v2y = particles[boundary[j]].get_pos().get_y();
+      if (v2y != v1y && ((v1y > py) != (v2y > py)) && (py-v1y)*(v2x-v1x)/(v2y-v1y) + v1x >= px) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  AABB get_aabb(const std::vector<Particle>& particles) {
+    double minX = DBL_MIN, maxX = DBL_MAX;
+    double minY = DBL_MIN, maxY = DBL_MAX;
+    for (std::size_t idx : particleIndices) {
+      double curX = particles[idx].get_pos().get_x();
+      double curY = particles[idx].get_pos().get_y();
+      minX = std::min(minX, curX); maxX = std::max(maxX, curX);
+      minY = std::min(minY, curY); maxY = std::max(maxY, curY);
+    }
+    Vec2 minPos(minX, minY);
+    Vec2 maxPos(maxX, maxY);
+    return AABB(minPos, maxPos);
+  }
+
+  std::vector<std::size_t> point_candidates_in_body(const std::vector<Particle>& particles, const AABB& otherBox) {
+    std::vector<std::size_t> points;
+    double minX = otherBox.get_min().get_x(), minY = otherBox.get_min().get_y();
+    double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
+    for (std::size_t idx : particleIndices) {
+      double x = particles[idx].get_pos().get_x();
+      double y = particles[idx].get_pos().get_y();
+      if (x > minX && x < maxX && y > minY && y < maxY) points.push_back(idx);
+    }
+    return points;
+  }
 };
