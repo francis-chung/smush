@@ -23,12 +23,12 @@ public:
     assert(subd > 0);
     
     w = wd, h = hi, mass = ms, restitution = rest, nx = subd + 1, ny = subd + 1;
-    start_idx_ = particles.size();
 
     double pm = mass / (nx * ny);
     const Vec2 center = bl + Vec2(wd * 0.5, hi * 0.5);
     const double c = std::cos(angleRad);
     const double s = std::sin(angleRad);
+    // only used to facilitate initializing the springs
     std::vector<std::vector<std::size_t>> grid;
 
     for (std::size_t i = 0; i < nx; ++i) {
@@ -45,8 +45,9 @@ public:
         Vec2 pos = center + rotatedFromCenter;
         Vec2 vel{0.0, 0.0};
         Particle p = Particle(pos, vel, pm, restitution);
+        particleIndices.push_back(particles.size());
+        grid[i].push_back(particles.size());
         particles.push_back(p);
-        grid[i].push_back(particles.size()-1);
       }
     }
     for (std::size_t i = 0; i < nx; ++i)   boundary.push_back(grid[i][0]);
@@ -70,12 +71,12 @@ public:
     }
   }
 
-  std::size_t get_particle(std::size_t i, std::size_t j) const { return start_idx_ + i*ny+j; }
+  std::size_t get_particle(std::size_t i, std::size_t j) const { return particleIndices.front() + i*ny+j; }
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
 
   void pin(std::vector<Particle>& particles, std::size_t i, std::size_t j) {
-    pin_index(particles, start_idx_ + i*ny+j);
+    pin_index(particles, get_particle(i, j));
   }
 
   void update_springs(std::vector<Particle>& particles) override {
@@ -119,8 +120,9 @@ public:
   }
 
   AABB get_aabb(const std::vector<Particle>& particles) override {
-    double minX = particles[start_idx_].get_pos().get_x(), maxX = particles[start_idx_].get_pos().get_x();
-    double minY = particles[start_idx_].get_pos().get_y(), maxY = particles[start_idx_].get_pos().get_y();
+    std::size_t startIdx = particleIndices.front();
+    double minX = particles[startIdx].get_pos().get_x(), maxX = particles[startIdx].get_pos().get_x();
+    double minY = particles[startIdx].get_pos().get_y(), maxY = particles[startIdx].get_pos().get_y();
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
         double cx = particles[get_particle(i, j)].get_pos().get_x();
