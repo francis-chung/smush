@@ -15,7 +15,7 @@ private:
   }
 
 public:
-  SoftRect(std::vector<Particle>& particles, Vec2 p, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) {
+  SoftRect(std::vector<Particle>& particles, const Vec2 bl, double wd, double hi, double ms, double rest, std::size_t subd, double angleRad = 0.0) {
     assert(wd > 0);
     assert(hi > 0);
     assert(ms > 0);
@@ -26,7 +26,7 @@ public:
     start_idx_ = particles.size();
 
     double pm = mass / (nx * ny);
-    const Vec2 center = p + Vec2(wd * 0.5, hi * 0.5);
+    const Vec2 center = bl + Vec2(wd * 0.5, hi * 0.5);
     const double c = std::cos(angleRad);
     const double s = std::sin(angleRad);
     std::vector<std::vector<std::size_t>> grid;
