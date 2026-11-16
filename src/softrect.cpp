@@ -25,7 +25,8 @@ public:
     w = wd, h = hi, mass = ms, restitution = rest, nx = subd + 1, ny = subd + 1;
 
     double pm = mass / (nx * ny);
-    const Vec2 center = bl + Vec2(wd * 0.5, hi * 0.5);
+    Vec2 vel{0.0, 0.0};
+    const Vec2 center = bl + Vec2(w * 0.5, h * 0.5);
     const double c = std::cos(angleRad);
     const double s = std::sin(angleRad);
     // only used to facilitate initializing the springs
@@ -35,15 +36,14 @@ public:
       grid.push_back(std::vector<std::size_t>());
       for (std::size_t j = 0; j < ny; ++j) {
         // get coordinates relative to center first
-        const double localX = (wd / subd) * i - wd * 0.5;
-        const double localY = (hi / subd) * j - hi * 0.5;
+        const double localX = (w / subd) * i - w * 0.5;
+        const double localY = (h / subd) * j - h * 0.5;
         const Vec2 rotatedFromCenter(
           c * localX - s * localY, 
           s * localX + c * localY
         );
 
         Vec2 pos = center + rotatedFromCenter;
-        Vec2 vel{0.0, 0.0};
         Particle p = Particle(pos, vel, pm, restitution);
         particleIndices.push_back(particles.size());
         grid[i].push_back(particles.size());
