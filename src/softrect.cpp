@@ -7,7 +7,6 @@ class SoftRect : public SoftBody {
 private: 
   double w, h;
   std::size_t nx, ny;                             // number of particles aligned to axes
-  std::vector<std::vector<std::size_t>> grid;
 
   void add_spring(std::vector<Particle>& particles, std::size_t i, std::size_t j, double stiff, double damp) {
     Vec2 d = particles[j].get_pos() - particles[i].get_pos();
@@ -24,11 +23,13 @@ public:
     assert(subd > 0);
     
     w = wd, h = hi, mass = ms, restitution = rest, nx = subd + 1, ny = subd + 1;
+    start_idx_ = particles.size();
 
     double pm = mass / (nx * ny);
     const Vec2 center = p + Vec2(wd * 0.5, hi * 0.5);
     const double c = std::cos(angleRad);
     const double s = std::sin(angleRad);
+    std::vector<std::vector<std::size_t>> grid;
 
     for (std::size_t i = 0; i < nx; ++i) {
       grid.push_back(std::vector<std::size_t>());
@@ -69,7 +70,7 @@ public:
     }
   }
 
-  std::size_t get_particle(std::size_t i, std::size_t j) const { return grid[i][j]; }
+  std::size_t get_particle(std::size_t i, std::size_t j) const { return start_idx_ + i*ny+j; }
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
 
@@ -81,7 +82,7 @@ public:
     const Vec2 particleForce = externalForce / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
-        particles[grid[i][j]].add_force(particleForce);
+        particles[get_particle(i, j)].add_force(particleForce);
       }
     }
   }
@@ -90,10 +91,11 @@ public:
     const Vec2 particleImpulse = impulse / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
-        Particle& p = particles[grid[i][j]];
+        std::size_t idx = get_particle(i, j);
+        Particle& p = particles[idx];
         const Vec2& v = p.get_vel();
         const double invM = p.get_inv_mass();
-        particles[grid[i][j]].set_vel(v + particleImpulse * invM);
+        particles[idx].set_vel(v + particleImpulse * invM);
       }
     }
   }
@@ -113,12 +115,12 @@ public:
   }
 
   AABB get_aabb(const std::vector<Particle>& particles) override {
-    double minX = particles[grid[0][0]].get_pos().get_x(), maxX = particles[grid[0][0]].get_pos().get_x();
-    double minY = particles[grid[0][0]].get_pos().get_y(), maxY = particles[grid[0][0]].get_pos().get_y();
+    double minX = particles[start_idx_].get_pos().get_x(), maxX = particles[start_idx_].get_pos().get_x();
+    double minY = particles[start_idx_].get_pos().get_y(), maxY = particles[start_idx_].get_pos().get_y();
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
-        double cx = particles[grid[i][j]].get_pos().get_x();
-        double cy = particles[grid[i][j]].get_pos().get_y();
+        double cx = particles[get_particle(i, j)].get_pos().get_x();
+        double cy = particles[get_particle(i, j)].get_pos().get_y();
         minX = std::min(minX, cx); maxX = std::max(maxX, cx);
         minY = std::min(minY, cy); maxY = std::max(maxY, cy);
       }
@@ -135,7 +137,7 @@ public:
     double maxX = otherBox.get_max().get_x(), maxY = otherBox.get_max().get_y();
     for (std::size_t i = 0; i < nx; ++i) {
       for (std::size_t j = 0; j < ny; ++j) {
-        int p = grid[i][j];
+        int p = get_particle(i, j);
         double x = particles[p].get_pos().get_x();
         double y = particles[p].get_pos().get_y();
         if (x > minX && x < maxX && y > minY && y < maxY) points.push_back(p);
