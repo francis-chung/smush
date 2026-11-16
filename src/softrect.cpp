@@ -73,28 +73,6 @@ public:
     pin_index(particles, get_particle(i, j));
   }
 
-  void apply_external_force(std::vector<Particle>& particles) override {
-    const Vec2 particleForce = externalForce / (nx * ny);
-    for (std::size_t i = 0; i < nx; ++i) {
-      for (std::size_t j = 0; j < ny; ++j) {
-        particles[get_particle(i, j)].add_force(particleForce);
-      }
-    }
-  }
-
-  void apply_external_impulse(std::vector<Particle>& particles, const Vec2& impulse) override {
-    const Vec2 particleImpulse = impulse / (nx * ny);
-    for (std::size_t i = 0; i < nx; ++i) {
-      for (std::size_t j = 0; j < ny; ++j) {
-        std::size_t idx = get_particle(i, j);
-        Particle& p = particles[idx];
-        const Vec2& v = p.get_vel();
-        const double invM = p.get_inv_mass();
-        particles[idx].set_vel(v + particleImpulse * invM);
-      }
-    }
-  }
-
   bool point_in_polygon(std::size_t pIndex, const std::vector<Particle>& particles) override {
     double px = particles[pIndex].get_pos().get_x(), py = particles[pIndex].get_pos().get_y();
     bool inside = false;
