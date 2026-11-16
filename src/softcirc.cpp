@@ -46,4 +46,14 @@ public:
       add_spring(particles, idx, particleIndices.front(), ctrStiff, ctrDamp);
     }
   }
+
+  std::size_t get_particle(bool center, std::size_t pos = -1) {
+    assert(center || pos != -1);
+    if (center) return particleIndices.front();
+    return particleIndices[pos + 1];
+  }
+  
+  void pin(std::vector<Particle>& particles, bool center, std::size_t pos = -1) {
+    pin_index(particles, get_particle(center, pos));
+  }
 };
