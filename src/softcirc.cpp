@@ -24,7 +24,7 @@ public:
     double pm = mass / (num + 1);
     Vec2 vel{0.0, 0.0};
     
-    Particle center = Particle(c, vel, pm, rest);
+    Particle center = Particle(c, vel, pm, restitution);
     particleIndices.push_back(particles.size());
     particles.push_back(center);
     for (std::size_t i = 0; i < n; ++i) {
@@ -32,15 +32,15 @@ public:
       double localX = radius * std::cos(angle);
       double localY = radius * std::sin(angle);
       Vec2 pos = c + Vec2(localX, localY);
-      Particle p = Particle(pos, vel, mass, restitution);
+      Particle p = Particle(pos, vel, pm, restitution);
       particleIndices.push_back(particles.size());
       boundary.push_back(particles.size());
       particles.push_back(p);
     }
 
-    double rimStiff = 35.0, rimDamp = 0.5;
-    double skpStiff = 30.0, skpDamp = 0.5;
-    double ctrStiff = 120.0, ctrDamp = 0.6;
+    double rimStiff = 30.0, rimDamp = 0.5;
+    double skpStiff = 25.0, skpDamp = 0.5;
+    double ctrStiff = 50.0, ctrDamp = 0.6;
     for (std::size_t i = 0; i < n; ++i) {
       std::size_t idx = boundary[i];
       add_spring(particles, idx, boundary[(i+1)%n], rimStiff, rimDamp);

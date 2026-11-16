@@ -61,8 +61,8 @@ public:
   }
 
   AABB get_aabb(const std::vector<Particle>& particles) {
-    double minX = DBL_MIN, maxX = DBL_MAX;
-    double minY = DBL_MIN, maxY = DBL_MAX;
+    double minX = DBL_MAX, maxX = -DBL_MAX;
+    double minY = DBL_MAX, maxY = -DBL_MAX;
     for (std::size_t idx : particleIndices) {
       double curX = particles[idx].get_pos().get_x();
       double curY = particles[idx].get_pos().get_y();
