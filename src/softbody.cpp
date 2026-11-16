@@ -7,10 +7,10 @@
 class SoftBody {
 protected: 
   double mass, restitution;
-  std::vector<std::size_t> particleIndices{};
+  std::vector<std::size_t> particleIndices;
   std::vector<std::size_t> boundary;
   std::vector<Spring> springs;
-  Vec2 externalForce{0.0, 0.0};
+  Vec2 externalForce;
 
   void pin_index(std::vector<Particle>& particles, std::size_t idx) { particles[idx].pin(); }
 
