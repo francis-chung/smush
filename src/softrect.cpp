@@ -74,6 +74,10 @@ public:
   std::size_t get_nx() const { return nx; }
   std::size_t get_ny() const { return ny; }
 
+  void pin(std::vector<Particle>& particles, std::size_t i, std::size_t j) {
+    pin_index(particles, start_idx_ + i*ny+j);
+  }
+
   void update_springs(std::vector<Particle>& particles) override {
     for (Spring& s : springs) { s.apply_spring_force(particles); }
   }

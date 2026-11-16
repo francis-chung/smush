@@ -32,11 +32,6 @@ public:
     bodies.push_back(std::make_unique<SoftRect>(particles, origin, w, h, mass, restitution, subdiv, angleRad));
   }
   
-  // NOTE: to be implemented
-  // void pin_particle(SoftBody& body, std::size_t index) { 
-  //   particles[body.get_particle(index)].pin(); 
-  // }
-  
   void set_body_force(std::size_t bodyIndex, const Vec2& force) {
     bodies.at(bodyIndex)->set_external_force(force);
   }

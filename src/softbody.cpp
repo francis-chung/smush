@@ -13,6 +13,8 @@ protected:
   std::size_t start_idx_;
   Vec2 externalForce{0.0, 0.0};
 
+  void pin_index(std::vector<Particle>& particles, std::size_t idx) { particles[idx].pin(); }
+
 public: 
   virtual ~SoftBody() = default;
 
