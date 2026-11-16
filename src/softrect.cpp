@@ -73,10 +73,6 @@ public:
     pin_index(particles, get_particle(i, j));
   }
 
-  void update_springs(std::vector<Particle>& particles) override {
-    for (Spring& s : springs) { s.apply_spring_force(particles); }
-  }
-
   void apply_external_force(std::vector<Particle>& particles) override {
     const Vec2 particleForce = externalForce / (nx * ny);
     for (std::size_t i = 0; i < nx; ++i) {

@@ -26,8 +26,10 @@ public:
   const std::vector<std::size_t>& get_boundary() const { return boundary; }
   const std::vector<Spring>& get_springs() const { return springs; }
   void set_external_force(const Vec2& f) { externalForce = f; }
+  void update_springs(std::vector<Particle>& particles) {
+    for (Spring& s : springs) { s.apply_spring_force(particles); }
+  }
 
-  virtual void update_springs(std::vector<Particle>&) = 0;
   virtual void apply_external_force(std::vector<Particle>&) = 0;
   virtual void apply_external_impulse(std::vector<Particle>&, const Vec2&) = 0;
   virtual bool point_in_polygon(std::size_t, const std::vector<Particle>&) = 0;
