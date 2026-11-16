@@ -70,6 +70,6 @@ public:
   std::size_t get_ny() const { return ny; }
 
   void pin(std::vector<Particle>& particles, std::size_t i, std::size_t j) {
-    pin_index(particles, get_particle(i, j));
+    particles[get_particle(i, j)].pin();
   }
 };

@@ -54,6 +54,6 @@ public:
   }
   
   void pin(std::vector<Particle>& particles, bool center, std::size_t pos = -1) {
-    pin_index(particles, get_particle(center, pos));
+    particles[get_particle(center, pos)].pin();
   }
 };

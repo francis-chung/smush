@@ -20,8 +20,6 @@ protected:
     springs.push_back(Spring(i, j, len, stiff, damp));
   }
 
-  void pin_index(std::vector<Particle>& particles, std::size_t idx) { particles[idx].pin(); }
-
 public: 
   virtual ~SoftBody() = default;
 
