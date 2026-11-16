@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <cmath>
 
 class Vec2 {
@@ -24,6 +25,11 @@ public:
   Vec2& operator-=(const Vec2& v) { x -= v.x; y -= v.y; return *this; }
   Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
   Vec2& operator*=(double c) { x *= c; y *= c; return *this; }
+
+  friend std::ostream& operator<<(std::ostream& os, const Vec2& v) {
+    os << "(" << v.x << ", " << v.y << ")";
+    return os;
+  }
 
   double normsq() const { return x*x + y*y; }
   double norm() const { return sqrt(normsq()); }

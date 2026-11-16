@@ -3,6 +3,8 @@
 #include "softbody.cpp"
 #include "particle.cpp"
 
+#include <iostream>
+
 constexpr double PI = 3.14159265358979323846;
 
 class SoftCirc : public SoftBody {
@@ -26,7 +28,7 @@ public:
     particleIndices.push_back(particles.size());
     particles.push_back(center);
     for (std::size_t i = 0; i < n; ++i) {
-      double angle = 2.0 * PI / n;
+      double angle = 2.0 * PI * i / n;
       double localX = radius * std::cos(angle);
       double localY = radius * std::sin(angle);
       Vec2 pos = c + Vec2(localX, localY);
@@ -36,9 +38,9 @@ public:
       particles.push_back(p);
     }
 
-    double rimStiff = 25.0, rimDamp = 0.5;
-    double skpStiff = 20.0, skpDamp = 0.5;
-    double ctrStiff = 45.0, ctrDamp = 0.6;
+    double rimStiff = 35.0, rimDamp = 0.5;
+    double skpStiff = 30.0, skpDamp = 0.5;
+    double ctrStiff = 120.0, ctrDamp = 0.6;
     for (std::size_t i = 0; i < n; ++i) {
       std::size_t idx = boundary[i];
       add_spring(particles, idx, boundary[(i+1)%n], rimStiff, rimDamp);

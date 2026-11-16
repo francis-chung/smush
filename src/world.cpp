@@ -3,6 +3,7 @@
 #include "mathlib.cpp"
 #include "particle.cpp"
 #include "softrect.cpp"
+#include "softcirc.cpp"
 #include "collision.cpp"
 
 #include <iostream>
@@ -30,6 +31,10 @@ public:
 
   void add_rect(Vec2 origin, double w, double h, double mass, double restitution, std::size_t subdiv, double angleRad = 0.0) {
     bodies.push_back(std::make_unique<SoftRect>(particles, origin, w, h, mass, restitution, subdiv, angleRad));
+  }
+
+  void add_circ(Vec2 center, double r, double mass, double restitution, std::size_t subdiv) {
+    bodies.push_back(std::make_unique<SoftCirc>(particles, center, r, subdiv, mass, restitution));
   }
   
   void set_body_force(std::size_t bodyIndex, const Vec2& force) {
