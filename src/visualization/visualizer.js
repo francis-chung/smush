@@ -100,7 +100,7 @@ function render(state) {
 
 const shapeSelect = document.getElementById("shape");
 function syncFields() {
-  const isRect = shapeSelect === "rect";
+  const isRect = shapeSelect.value === "rect";
   document
     .querySelectorAll(".rect-only")
     .forEach((e) => (e.style.display = isRect ? "" : "none"));
