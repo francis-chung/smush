@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let viewX = 0,
   viewY = 0;
-let scale = 5; // pixels per physis unit
+let scale = 5; // pixels per physics unit
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -97,6 +97,57 @@ function render(state) {
     }
   });
 }
+
+const shapeSelect = document.getElementById("shape");
+function syncFields() {
+  const isRect = shapeSelect === "rect";
+  document
+    .querySelectorAll(".rect-only")
+    .forEach((e) => (e.style.display = isRect ? "" : "none"));
+  document
+    .querySelectorAll(".circ-only")
+    .forEach((e) => (e.style.display = isRect ? "none" : ""));
+}
+shapeSelect.addEventListener("change", syncFields);
+syncFields();
+
+const num = (id) => parseFloat(document.getElementById(id).value);
+
+document.getElementById("spawnBtn").addEventListener("click", async () => {
+  const type = shapeSelect.value;
+  const body =
+    type === "rect"
+      ? {
+          type,
+          x: num("f-x"),
+          y: num("f-y"),
+          w: num("f-w"),
+          h: num("f-h"),
+          mass: num("f-mass"),
+          restitution: num("f-rest"),
+          subdiv: num("f-subdiv"),
+          angleDeg: num("f-angle"),
+        }
+      : {
+          type,
+          x: num("f-x"),
+          y: num("f-y"),
+          radius: num("f-radius"),
+          mass: num("f-mass"),
+          restitution: num("f-rest"),
+          num: num("f-num"),
+        };
+  try {
+    const r = await fetch("/spawn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) console.error("spawn rejected:", r.status);
+  } catch (e) {
+    console.error("spawn failed:", e);
+  }
+});
 
 let lastFrameTime = Date.now();
 let fps = 0;
