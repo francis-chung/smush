@@ -24,12 +24,83 @@
         padding: 10px;
         border-radius: 4px;
       }
+      #spawnPanel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        font-family: monospace;
+        padding: 10px;
+        border-radius: 6px;
+        width: 180px;
+      }
+      #spawnPanel input {
+        width: 60px;
+      }
+      #spawnBtn {
+        margin-top: 8px;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
     <div id="info">
       <div>FPS: <span id="fps">--</span></div>
       <div>Particles: <span id="particleCount">--</span></div>
+    </div>
+    <div id="spawnPanel">
+      <div style="margin-bottom: 6px">
+        <label
+          >Shape
+          <select id="shape">
+            <option value="rect">Rect</option>
+            <option value="circ">Circle</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>x <input id="f-x" type="number" value="0" /></label>
+      </div>
+      <div>
+        <label>y <input id="f-y" type="number" value="20" /></label>
+      </div>
+
+      <!-- rect-only -->
+      <div class="rect-only">
+        <label>w <input id="f-w" type="number" value="10" /></label>
+      </div>
+      <div class="rect-only">
+        <label>h <input id="f-h" type="number" value="10" /></label>
+      </div>
+      <div class="rect-only">
+        <label>subdiv <input id="f-subdiv" type="number" value="5" /></label>
+      </div>
+      <div class="rect-only">
+        <label
+          >angle (deg) <input id="f-angle" type="number" value="0"
+        /></label>
+      </div>
+
+      <!-- circle-only -->
+      <div class="circ-only">
+        <label>radius <input id="f-radius" type="number" value="5" /></label>
+      </div>
+      <div class="circ-only">
+        <label>num <input id="f-num" type="number" value="16" /></label>
+      </div>
+
+      <div>
+        <label
+          >mass <input id="f-mass" type="number" value="1" step="0.1"
+        /></label>
+      </div>
+      <div>
+        <label
+          >restitution <input id="f-rest" type="number" value="0.8" step="0.1"
+        /></label>
+      </div>
+      <button id="spawnBtn">Add body</button>
     </div>
     <canvas id="canvas"></canvas>
     <script src="visualizer.js"></script>
