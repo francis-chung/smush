@@ -114,7 +114,6 @@ syncFields();
 const num = (id) => parseFloat(document.getElementById(id).value);
 
 document.getElementById("spawnBtn").addEventListener("click", async () => {
-  console.log("clicked");
   const type = shapeSelect.value;
   const body =
     type === "rect"
@@ -144,7 +143,6 @@ document.getElementById("spawnBtn").addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    console.log(JSON.stringify(body));
     if (!r.ok) console.error("spawn rejected:", r.status);
   } catch (e) {
     console.error("spawn failed:", e);

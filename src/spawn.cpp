@@ -47,13 +47,25 @@ void start_server() {
   httplib::Server svr;
   svr.set_mount_point("/", "visualization");   // serves visualizer.html
 
+  svr.Options("/spawn", [](const httplib::Request&, httplib::Response& res) {
+    res.set_header("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.set_header("Access-Control-Allow-Headers", "Content-Type");
+    res.status = 204;   // no content
+  });
+
   svr.Post("/spawn", [](const httplib::Request& req, httplib::Response& res) {
-    SpawnCmd cmd = parse(req.body); // TODO: JSON parsing
-    {
-      std::lock_guard<std::mutex> lock(spawnMx);
-      pendingSpawns.push_back(cmd);
+    res.set_header("Access-Control-Allow-Origin", "*");
+    try {
+      SpawnCmd cmd = parse(req.body); // TODO: JSON parsing
+      {
+        std::lock_guard<std::mutex> lock(spawnMx);
+        pendingSpawns.push_back(cmd);
+      }
+      res.set_content("{\"ok\":true}", "application/json");
+    } catch (const std::exception& e) {
+      res.status = 400;
+      res.set_content(std::string("{\"error\":\"") + e.what() + "\"}", "application/json");
     }
-    res.set_content("{\"ok\":true}", "application/json");
   });
   svr.listen("127.0.0.1", 8000);   // this blocks, so it runs on its own thread
 }
