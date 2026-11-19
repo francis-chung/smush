@@ -6,6 +6,8 @@
 
 #include <cfloat>
 
+const double pi = std::acos(-1.0);
+
 class SoftBody {
 protected: 
   double mass, restitution;

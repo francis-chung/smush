@@ -19,7 +19,6 @@ public:
 
     double pm = mass / (num + 1);
     Vec2 vel{0.0, 0.0};
-    const double pi = std::acos(-1.0);
     
     Particle center = Particle(c, vel, pm, restitution);
     particleIndices.push_back(particles.size());

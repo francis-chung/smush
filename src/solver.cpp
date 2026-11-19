@@ -7,6 +7,7 @@
 #include <chrono> 
 #include <thread>
 #include <fstream>
+#include <mutex>
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -32,6 +33,7 @@ public:
 
     std::thread serverThread(start_server);
     serverThread.detach();    // runs independently rather than joining
+    
     bool running = true;
     static std::size_t frameCount = 0;
     while (running) {
@@ -45,6 +47,20 @@ public:
 
       accum += dt;
       while (accum >= fixedDeltaTime) {
+        // drain spawns
+        std::vector<SpawnCmd> toSpawn;
+        {
+          std::lock_guard<std::mutex> lock(spawnMx);
+          std::swap(toSpawn, pendingSpawns);
+        }
+        for (const SpawnCmd& c : toSpawn) {
+          if (c.type == "rect") {
+            world.add_rect(Vec2(c.x, c.y), c.w, c.h, c.mass, c.rest, c.subdiv, c.angleDeg * pi / 180.0);
+          } else {
+            world.add_circ(Vec2(c.x, c.y), c.radius, c.mass, c.rest, c.num);
+          }
+        }
+
         world.update(fixedDeltaTime);
         accum -= fixedDeltaTime;
         
