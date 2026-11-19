@@ -12,9 +12,6 @@
 
 using nlohmann::json;
 
-std::mutex spawnMx;
-std::vector<SpawnCmd> pendingSpawns;
-
 struct SpawnCmd {
   std::string type;    // "rect" | "circ"
   double x, y, mass, rest;
@@ -22,19 +19,8 @@ struct SpawnCmd {
   std::size_t subdiv, num;
 };
 
-void start_server() {  
-  httplib::Server svr;
-  svr.set_mount_point("/", "visualization");   // serves visualizer.html
-
-  svr.Post("/spawn", [&](const httplib::Request& req, httplib::Response& res) {
-    SpawnCmd cmd = parse(req.body); // TODO: JSON parsing
-    {
-      std::lock_guard<std::mutex> lock(spawnMx);
-      pendingSpawns.push_back(cmd);
-    }
-    res.set_content("{\"ok\":true}", "application/json");
-  });
-}
+std::mutex spawnMx;
+std::vector<SpawnCmd> pendingSpawns;
 
 SpawnCmd parse(std::string str) {
   json j = json::parse(str);
@@ -55,4 +41,19 @@ SpawnCmd parse(std::string str) {
     cmd.num    = j.at("num").get<std::size_t>();
   }
   return cmd;
+}
+
+void start_server() {  
+  httplib::Server svr;
+  svr.set_mount_point("/", "visualization");   // serves visualizer.html
+
+  svr.Post("/spawn", [](const httplib::Request& req, httplib::Response& res) {
+    SpawnCmd cmd = parse(req.body); // TODO: JSON parsing
+    {
+      std::lock_guard<std::mutex> lock(spawnMx);
+      pendingSpawns.push_back(cmd);
+    }
+    res.set_content("{\"ok\":true}", "application/json");
+  });
+  svr.listen("127.0.0.1", 8000);   // this blocks, so it runs on its own thread
 }

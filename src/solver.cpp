@@ -30,7 +30,8 @@ public:
     TimePoint currentTime = Clock::now();
     double accum = 0.0;
 
-    start_server();
+    std::thread serverThread(start_server);
+    serverThread.detach();    // runs independently rather than joining
     bool running = true;
     static std::size_t frameCount = 0;
     while (running) {
