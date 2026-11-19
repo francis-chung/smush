@@ -1,6 +1,7 @@
 #include "softrect.cpp"
 #include "world.cpp"
 #include "visualizer.cpp"
+#include "spawn.cpp"
 
 #include <vector>
 #include <chrono> 
@@ -29,6 +30,7 @@ public:
     TimePoint currentTime = Clock::now();
     double accum = 0.0;
 
+    start_server();
     bool running = true;
     static std::size_t frameCount = 0;
     while (running) {
